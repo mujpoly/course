@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Computing Workshop — Presentation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0e17;
+      --bg-card: #111827;
+      --accent: #3b82f6;
+      --accent2: #06b6d4;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #1e293b;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --purple: #a855f7;
+      --orange: #f97316;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.08) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .deck { position: relative; width: 100vw; height: 100vh; z-index: 1; }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2.5rem 4rem 5rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(40px);
+      transition: opacity 0.45s ease, transform 0.45s ease, visibility 0.45s;
+      overflow-y: auto;
+    }
+
+    .slide.active { opacity: 1; visibility: visible; transform: translateX(0); }
+
+    .slide-num {
+      position: absolute;
+      top: 1.25rem;
+      right: 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .slide-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent2);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.15; margin-bottom: 0.75rem; }
+    h1 span { color: var(--accent); }
+    h2 { font-size: clamp(1.4rem, 3vw, 2.1rem); font-weight: 700; margin-bottom: 1rem; }
+
+    .subtitle { font-size: clamp(0.95rem, 1.8vw, 1.2rem); color: var(--muted); max-width: 720px; line-height: 1.6; }
+    .meta { margin-top: 1.5rem; font-size: 0.9rem; color: var(--muted); }
+
+    ul.bullets { list-style: none; margin-top: 0.75rem; }
+    ul.bullets li {
+      padding: 0.4rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      font-size: clamp(0.88rem, 1.6vw, 1.05rem);
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+    ul.bullets li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; max-width: 960px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-top: 1rem; max-width: 1000px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; max-width: 1000px; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+    }
+    .card h3 { font-size: 0.95rem; margin-bottom: 0.4rem; color: var(--accent); }
+    .card h4 { font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text); }
+    .card p, .card li { font-size: 0.82rem; color: var(--muted); line-height: 1.45; }
+    .card ul { list-style: none; margin-top: 0.3rem; }
+    .card ul li { padding: 0.15rem 0; font-size: 0.8rem; }
+
+    .diagram {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-family: 'Cascadia Code', Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--accent2);
+      white-space: pre;
+      margin-top: 0.75rem;
+    }
+
+    table { border-collapse: collapse; margin-top: 0.75rem; font-size: 0.82rem; width: 100%; max-width: 900px; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+    th { background: var(--bg-card); color: var(--text); font-weight: 600; }
+    td { color: var(--muted); }
+
+    .highlight {
+      display: inline-block;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #93c5fd;
+    }
+
+    .emoji-big { font-size: 2.5rem; margin-bottom: 0.35rem; }
+
+    /* ── Charts ── */
+    .chart-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-top: 0.75rem;
+    }
+    .chart-title { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .bar-chart { display: flex; flex-direction: column; gap: 0.65rem; }
+    .bar-row { display: flex; align-items: center; gap: 0.75rem; }
+    .bar-label { width: 110px; font-size: 0.78rem; color: var(--muted); text-align: right; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 22px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #fff;
+      animation: growBar 1s ease forwards;
+      width: 0;
+    }
+    @keyframes growBar { to { width: var(--w); } }
+    .bar-fill.aws { background: linear-gradient(90deg, #ff9900, #ffb84d); }
+    .bar-fill.azure { background: linear-gradient(90deg, #0078d4, #50a0e8); }
+    .bar-fill.gcp { background: linear-gradient(90deg, #4285f4, #6fa8f7); }
+    .bar-fill.other { background: linear-gradient(90deg, #64748b, #94a3b8); }
+    .bar-fill.cloud { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .bar-fill.green { background: linear-gradient(90deg, var(--success), #4ade80); }
+
+    .stack-chart {
+      display: flex;
+      height: 200px;
+      gap: 1.5rem;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0 1rem;
+    }
+    .stack-col { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; flex: 1; max-width: 100px; }
+    .stack-bar {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      flex-direction: column-reverse;
+      overflow: hidden;
+      min-height: 40px;
+    }
+    .stack-seg { width: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 600; color: #fff; }
+    .stack-seg.app { background: #3b82f6; }
+    .stack-seg.runtime { background: #8b5cf6; }
+    .stack-seg.os { background: #06b6d4; }
+    .stack-seg.infra { background: #22c55e; }
+    .stack-name { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+    .stack-legend { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; font-size: 0.72rem; color: var(--muted); }
+    .stack-legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+    .leg-app::before { background: #3b82f6; }
+    .leg-runtime::before { background: #8b5cf6; }
+    .leg-os::before { background: #06b6d4; }
+    .leg-infra::before { background: #22c55e; }
+
+    /* Donut chart */
+    .donut-wrap { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+    .donut {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #ff9900 0deg 144deg,
+        #0078d4 144deg 234deg,
+        #4285f4 234deg 288deg,
+        #64748b 288deg 360deg
+      );
+      position: relative;
+      flex-shrink: 0;
+    }
+    .donut::after {
+      content: 'Cloud\nMarket';
+      white-space: pre;
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+      position: absolute;
+      inset: 28%;
+      background: var(--bg-card);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .donut-legend { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.8rem; }
+    .donut-legend div { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Roadmap flow */
+    .roadmap-flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      padding: 0.5rem 0;
+      max-width: 100%;
+    }
+    .road-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      min-width: 100px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .road-step .num { font-size: 0.65rem; color: var(--accent2); font-weight: 700; }
+    .road-step .name { font-size: 0.75rem; font-weight: 600; margin-top: 0.2rem; }
+    .road-arrow { color: var(--accent); font-size: 1.2rem; padding: 0 0.25rem; flex-shrink: 0; }
+
+    .roadmap-vertical { max-width: 520px; }
+    .rv-step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.6rem 0;
+      border-left: 2px solid var(--border);
+      margin-left: 1rem;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+    .rv-step::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: absolute;
+      left: -7px;
+      top: 0.85rem;
+    }
+    .rv-step.final::before { background: var(--success); width: 14px; height: 14px; left: -8px; }
+    .rv-step h4 { font-size: 0.9rem; margin-bottom: 0.15rem; }
+    .rv-step p { font-size: 0.78rem; color: var(--muted); }
+
+    /* Cert path */
+    .cert-level {
+      display: flex;
+      align-items: stretch;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .cert-tier {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+    }
+    .cert-tier.featured { border-color: var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.15); }
+    .cert-tier .tier-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent2); }
+    .cert-tier h4 { font-size: 0.9rem; margin: 0.4rem 0; }
+    .cert-tier p { font-size: 0.75rem; color: var(--muted); }
+    .cert-tier .badge-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
+
+    .spec-card { border-top: 3px solid var(--accent); }
+    .spec-card.devops { border-top-color: var(--orange); }
+    .spec-card.security { border-top-color: var(--danger, #ef4444); }
+    .spec-card.data { border-top-color: var(--purple); }
+    .spec-card.arch { border-top-color: var(--success); }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; max-width: 1000px; }
+
+    .slide-content-wrap { max-width: 1000px; }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 100;
+      background: rgba(17,24,39,0.92);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 0.45rem 1.15rem;
+      backdrop-filter: blur(12px);
+    }
+    .controls button {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: 0.2s;
+    }
+    .controls button:hover { border-color: var(--accent); color: var(--accent); }
+    .controls button:disabled { opacity: 0.3; cursor: default; }
+    #slideCounter { font-size: 0.85rem; color: var(--muted); min-width: 70px; text-align: center; }
+
+    .progress-track { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--border); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.4s ease; width: 5%; }
+
+    .kbd-hint { position: fixed; bottom: 1.25rem; right: 1.5rem; font-size: 0.72rem; color: var(--muted); z-index: 100; }
+    kbd { background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; padding: 0.1rem 0.35rem; font-size: 0.68rem; }
+
+    @media (max-width: 900px) {
+      .slide { padding: 2rem 1.25rem 5rem; }
+      .grid-2, .grid-3, .grid-4, .two-col { grid-template-columns: 1fr; }
+      .cert-level { flex-direction: column; }
+      .kbd-hint { display: none; }
+    }
+
+    @media print {
+      .controls, .progress-track, .kbd-hint, .slide-num { display: none; }
+      .slide { position: relative; opacity: 1 !important; visibility: visible !important; transform: none !important; page-break-after: always; height: auto; min-height: 100vh; }
+      body { overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="deck" id="deck">
+
+    <!-- 1 Title -->
+    <section class="slide active">
+      <span class="slide-num"></span>
+      <div class="emoji-big">☁️</div>
+      <p class="slide-label">Cloud Engineer Workshop</p>
+      <h1>Cloud Computing<br><span>Workshop</span></h1>
+      <p class="subtitle">From zero to deploying your first cloud application — fundamentals, labs, certifications, and career paths for students and beginners.</p>
+      <div class="highlight">Today: Concepts · Architecture · Labs · Roadmap · Certifications</div>
+      <p class="meta">Cloud Computing Academy · 2026</p>
+    </section>
+
+    <!-- 2 What is Cloud + market chart -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Fundamentals</p>
+      <h2>What Is Cloud Computing?</h2>
+      <div class="two-col">
+        <div>
+          <p class="subtitle" style="margin-bottom:0.75rem">Delivery of servers, storage, databases, and networking over the Internet — on demand, pay-as-you-go.</p>
+          <ul class="bullets">
+            <li><strong>Rent</strong> instead of buying physical hardware</li>
+            <li><strong>Scale</strong> resources up or down in minutes</li>
+            <li>Provider manages data centers, power, cooling</li>
+            <li><strong>Analogy:</strong> Electricity grid vs. own power plant</li>
+          </ul>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">Global Cloud Spending Growth ($ Billions)</div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label">2022</span><div class="bar-track"><div class="bar-fill cloud" style="--w:45%">$545B</div></div></div>
+            <div class="bar-row"><span class="bar-label">2023</span><div class="bar-track"><div class="bar-fill cloud" style="--w:55%">$678B</div></div></div>
+            <div class="bar-row"><span class="bar-label">2024</span><div class="bar-track"><div class="bar-fill cloud" style="--w:65%">$790B</div></div></div>
+            <div class="bar-row"><span class="bar-label">2026 est.</span><div class="bar-track"><div class="bar-fill green" style="--w:80%">$950B+</div></div></div>
+          </div>
+          <p style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem">Cloud is one of the fastest-growing areas in IT — high demand for skilled engineers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 Service models + stack chart -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Service Models</p>
+      <h2>IaaS · PaaS · SaaS</h2>
+      <div class="two-col">
+        <div class="chart-box">
+          <div class="chart-title">Shared Responsibility Model (who manages what)</div>
+          <div class="stack-chart">
+            <div class="stack-col">
+              <div class="stack-bar" style="height:180px">
+                <div class="stack-seg app" style="flex:1">App</div>
+                <div class="stack-seg runtime" style="flex:1">Run</div>
+                <div class="stack-seg os" style="flex:1">OS</div>
+                <div class="stack-seg infra" style="flex:2">Infra</div>
+              </div>
+              <span class="stack-name">IaaS</span>
+            </div>
+            <div class="stack-col">
+              <div class="stack-bar" style="height:180px">
+                <div class="stack-seg app" style="flex:1">App</div>
+                <div class="stack-seg runtime" style="flex:1">Run</div>
+                <div class="stack-seg os" style="flex:1">OS</div>
+                <div class="stack-seg infra" style="flex:2">Infra</div>
+              </div>
+              <span class="stack-name">PaaS</span>
+            </div>
+            <div class="stack-col">
+              <div class="stack-bar" style="height:180px">
+                <div class="stack-seg app" style="flex:0.2;background:#1e293b"></div>
+                <div class="stack-seg app" style="flex:0.8">App</div>
+                <div class="stack-seg runtime" style="flex:1">Run</div>
+                <div class="stack-seg os" style="flex:1">OS</div>
+                <div class="stack-seg infra" style="flex:2">Infra</div>
+              </div>
+              <span class="stack-name">SaaS</span>
+            </div>
+          </div>
+          <div class="stack-legend">
+            <span class="leg-app">Application</span>
+            <span class="leg-runtime">Runtime</span>
+            <span class="leg-os">Operating System</span>
+            <span class="leg-infra">Infrastructure (Provider)</span>
+          </div>
+        </div>
+        <div class="grid-1">
+          <table>
+            <thead><tr><th>Model</th><th>You Manage</th><th>Examples</th></tr></thead>
+            <tbody>
+              <tr><td><strong>IaaS</strong></td><td>OS, apps, config</td><td>EC2, Azure VMs</td></tr>
+              <tr><td><strong>PaaS</strong></td><td>Application code</td><td>App Engine, Heroku</td></tr>
+              <tr><td><strong>SaaS</strong></td><td>Just use the app</td><td>Gmail, Salesforce</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 Providers + market share donut -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Cloud Providers</p>
+      <h2>Major Cloud Providers</h2>
+      <div class="two-col">
+        <div class="chart-box">
+          <div class="chart-title">Global Cloud Market Share (approx.)</div>
+          <div class="donut-wrap">
+            <div class="donut"></div>
+            <div class="donut-legend">
+              <div><span class="dot" style="background:#ff9900"></span> AWS — ~40%</div>
+              <div><span class="dot" style="background:#0078d4"></span> Azure — ~25%</div>
+              <div><span class="dot" style="background:#4285f4"></span> Google Cloud — ~15%</div>
+              <div><span class="dot" style="background:#64748b"></span> Others — ~20%</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <table>
+            <thead><tr><th>Service</th><th>AWS</th><th>Azure</th><th>GCP</th></tr></thead>
+            <tbody>
+              <tr><td>Compute</td><td>EC2</td><td>VMs</td><td>Compute Engine</td></tr>
+              <tr><td>Storage</td><td>S3</td><td>Blob</td><td>Cloud Storage</td></tr>
+              <tr><td>Database</td><td>RDS</td><td>Azure SQL</td><td>Cloud SQL</td></tr>
+              <tr><td>Network</td><td>VPC</td><td>VNet</td><td>VPC</td></tr>
+              <tr><td>Serverless</td><td>Lambda</td><td>Functions</td><td>Cloud Functions</td></tr>
+              <tr><td>Kubernetes</td><td>EKS</td><td>AKS</td><td>GKE</td></tr>
+            </tbody>
+          </table>
+          <p class="highlight" style="font-size:0.82rem">Learn concepts once — they transfer across all providers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 Core services -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Building Blocks</p>
+      <h2>Core Cloud Services</h2>
+      <div class="grid-2">
+        <div class="card"><h3>⚡ Compute</h3><p>VMs, containers, serverless — run your code</p><ul><li>EC2 · Azure VMs · Lambda</li></ul></div>
+        <div class="card"><h3>💾 Storage</h3><p>Object, block, file — persist data</p><ul><li>S3 · Blob · EBS</li></ul></div>
+        <div class="card"><h3>🗄️ Databases</h3><p>SQL and NoSQL managed databases</p><ul><li>RDS · Cosmos DB · DynamoDB</li></ul></div>
+        <div class="card"><h3>🌐 Networking</h3><p>VPC, subnets, load balancers, firewalls</p><ul><li>VPC · Security Groups · NAT</li></ul></div>
+      </div>
+      <pre class="diagram" style="max-width:100%">Region → AZ A + AZ B  |  Public Subnet (LB) → Private Subnet (App + DB)</pre>
+    </section>
+
+    <!-- 6 Architecture -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Architecture</p>
+      <h2>Typical Cloud Architecture</h2>
+      <div class="two-col">
+        <pre class="diagram">         Internet
+            |
+       DNS / CDN
+            |
+      Load Balancer
+       /          \
+  App Server    App Server
+       \          /
+        Database
+            |
+         Storage</pre>
+        <div>
+          <ul class="bullets">
+            <li><strong>Public subnet</strong> — load balancer, bastion host</li>
+            <li><strong>Private subnet</strong> — app servers, databases</li>
+            <li><strong>Multi-AZ</strong> — survive data center failures</li>
+            <li><strong>Auto Scaling</strong> — add/remove servers by demand</li>
+          </ul>
+          <div class="chart-box" style="margin-top:0.75rem">
+            <div class="chart-title">Well-Architected Pillars</div>
+            <div class="bar-chart">
+              <div class="bar-row"><span class="bar-label">Security</span><div class="bar-track"><div class="bar-fill cloud" style="--w:95%"></div></div></div>
+              <div class="bar-row"><span class="bar-label">Reliability</span><div class="bar-track"><div class="bar-fill green" style="--w:90%"></div></div></div>
+              <div class="bar-row"><span class="bar-label">Performance</span><div class="bar-track"><div class="bar-fill cloud" style="--w:85%"></div></div></div>
+              <div class="bar-row"><span class="bar-label">Cost</span><div class="bar-track"><div class="bar-fill azure" style="--w:80%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 Security -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Security</p>
+      <h2>Security & IAM</h2>
+      <pre class="diagram">User → Authentication → Authorization → Permission → Resource</pre>
+      <div class="grid-2">
+        <div class="card"><h3>IAM Components</h3><ul><li>Users, Groups, Roles</li><li>Policies (JSON permissions)</li><li>MFA — multi-factor auth</li><li>Least privilege principle</li></ul></div>
+        <div class="card"><h3>Best Practices ✓</h3><ul><li>Enable MFA everywhere</li><li>Use roles, not access keys</li><li>Never commit secrets to Git</li><li>Encrypt data at rest & in transit</li></ul></div>
+      </div>
+    </section>
+
+    <!-- 8 Modern cloud -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Modern Cloud</p>
+      <h2>Containers, Serverless & IaC</h2>
+      <div class="grid-3">
+        <div class="card"><h3>🐳 Docker</h3><p>App + dependencies in portable containers</p><p style="font-family:monospace;font-size:0.75rem;color:#06b6d4;margin-top:0.4rem">docker build · docker run</p></div>
+        <div class="card"><h3>☸️ Kubernetes</h3><p>Orchestrate containers at scale</p><p style="font-size:0.8rem;margin-top:0.4rem">Pods · Services · Ingress</p></div>
+        <div class="card"><h3>📜 Terraform</h3><p>Infrastructure as Code</p><p style="font-family:monospace;font-size:0.75rem;color:#06b6d4;margin-top:0.4rem">init → plan → apply</p></div>
+      </div>
+      <div class="chart-box" style="max-width:600px;margin-top:1rem">
+        <div class="chart-title">DevOps Adoption Impact</div>
+        <div class="bar-chart">
+          <div class="bar-row"><span class="bar-label">Deploy freq.</span><div class="bar-track"><div class="bar-fill green" style="--w:88%">+200%</div></div></div>
+          <div class="bar-row"><span class="bar-label">Recovery time</span><div class="bar-track"><div class="bar-fill cloud" style="--w:75%">-60%</div></div></div>
+          <div class="bar-row"><span class="bar-label">Change failure</span><div class="bar-track"><div class="bar-fill azure" style="--w:65%">-40%</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 Labs -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Hands-on</p>
+      <h2>Today's Workshop Labs</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Lab 1 🖥️</h3><p><strong>First Website</strong></p><ul><li>Create cloud VM</li><li>SSH + install Nginx</li><li>Publish HTML page</li></ul></div>
+        <div class="card"><h3>Lab 2 🐳</h3><p><strong>Docker App</strong></p><ul><li>Write Dockerfile</li><li>Build & run container</li><li>Expose port 8080</li></ul></div>
+        <div class="card"><h3>Lab 3 📜</h3><p><strong>Terraform IaC</strong></p><ul><li>Write .tf config</li><li>plan & apply</li><li>destroy safely</li></ul></div>
+      </div>
+      <p class="highlight">📂 Use <strong>index.html</strong> (Cloud Computing Academy) for full course, quizzes & simulated terminal.</p>
+    </section>
+
+    <!-- 10 Career Roadmap -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Career Path</p>
+      <h2>Cloud Career Roadmap</h2>
+      <div class="roadmap-flow">
+        <div class="road-step"><div class="num">01</div><div class="name">Fundamentals</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">02</div><div class="name">Linux</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">03</div><div class="name">Networking</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">04</div><div class="name">Git</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">05</div><div class="name">AWS/Azure</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">06</div><div class="name">Docker</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">07</div><div class="name">Kubernetes</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">08</div><div class="name">Terraform</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step"><div class="num">09</div><div class="name">CI/CD</div></div>
+        <span class="road-arrow">→</span>
+        <div class="road-step" style="border-color:var(--success)"><div class="num">🎯</div><div class="name">Cloud Engineer</div></div>
+      </div>
+      <div class="two-col" style="margin-top:1rem">
+        <div class="roadmap-vertical">
+          <div class="rv-step"><h4>Cloud Fundamentals</h4><p>IaaS/PaaS/SaaS, deployment models — this workshop & course</p></div>
+          <div class="rv-step"><h4>Linux & Networking</h4><p>CLI, SSH, TCP/IP, DNS, firewalls, load balancing</p></div>
+          <div class="rv-step"><h4>Cloud Provider Deep Dive</h4><p>Pick AWS or Azure, build projects, pursue certification</p></div>
+          <div class="rv-step"><h4>DevOps Toolchain</h4><p>Docker, K8s, Terraform, CI/CD pipelines</p></div>
+          <div class="rv-step final"><h4>Cloud / DevOps Engineer</h4><p>Design, deploy, and operate production cloud systems</p></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">Average Cloud Role Salaries (USD, approximate)</div>
+          <div class="bar-chart">
+            <div class="bar-row"><span class="bar-label">Cloud Support</span><div class="bar-track"><div class="bar-fill cloud" style="--w:35%">$55–70K</div></div></div>
+            <div class="bar-row"><span class="bar-label">Cloud Engineer</span><div class="bar-track"><div class="bar-fill green" style="--w:55%">$90–120K</div></div></div>
+            <div class="bar-row"><span class="bar-label">DevOps Engineer</span><div class="bar-track"><div class="bar-fill azure" style="--w:60%">$100–130K</div></div></div>
+            <div class="bar-row"><span class="bar-label">Solutions Architect</span><div class="bar-track"><div class="bar-fill aws" style="--w:70%">$120–160K</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 Cloud Specializations -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Specializations</p>
+      <h2>Cloud Career Specializations</h2>
+      <p class="subtitle" style="margin-bottom:0.5rem">After fundamentals, choose a path based on your interests and strengths.</p>
+      <div class="grid-4">
+        <div class="card spec-card arch">
+          <h3>🏗️ Solutions Architect</h3>
+          <p>Design scalable, secure cloud systems</p>
+          <ul><li>VPC, HA, multi-tier apps</li><li>Cost optimization</li><li>AWS SAA · Azure AZ-305</li></ul>
+        </div>
+        <div class="card spec-card devops">
+          <h3>⚙️ DevOps Engineer</h3>
+          <p>Automate build, deploy, monitor</p>
+          <ul><li>CI/CD, Docker, K8s</li><li>Terraform, Ansible</li><li>AWS DOP · AZ-400</li></ul>
+        </div>
+        <div class="card spec-card security">
+          <h3>🔒 Cloud Security</h3>
+          <p>Protect cloud workloads & data</p>
+          <ul><li>IAM, encryption, compliance</li><li>SIEM, zero trust</li><li>AWS SCS · AZ-500</li></ul>
+        </div>
+        <div class="card spec-card data">
+          <h3>📊 Cloud Data / ML</h3>
+          <p>Data pipelines & AI on cloud</p>
+          <ul><li>BigQuery, Synapse, S3</li><li>Spark, ML services</li><li>AWS Data · DP-203</li></ul>
+        </div>
+      </div>
+      <table style="margin-top:1rem">
+        <thead><tr><th>Specialization</th><th>Key Skills</th><th>Typical Certifications</th></tr></thead>
+        <tbody>
+          <tr><td>Cloud Administrator</td><td>VMs, IAM, monitoring, backups</td><td>AWS SysOps · AZ-104</td></tr>
+          <tr><td>Site Reliability (SRE)</td><td>SLAs, incident response, automation</td><td>CKA · GCP Professional</td></tr>
+          <tr><td>Network Engineer</td><td>VPC, VPN, load balancers, DNS</td><td>AWS Advanced Networking</td></tr>
+          <tr><td>Platform Engineer</td><td>Internal dev platforms, K8s, GitOps</td><td>CKA · Terraform Associate</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 12 Certification Roadmap -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Certifications</p>
+      <h2>Certification Roadmap</h2>
+      <div class="cert-level">
+        <div class="cert-tier featured">
+          <div class="badge-icon">🎓</div>
+          <div class="tier-label">Workshop / Course</div>
+          <h4>Cloud Computing Fundamentals</h4>
+          <p>Complete lessons + final exam (70%+) in Cloud Computing Academy</p>
+          <p style="color:var(--success);margin-top:0.4rem;font-size:0.72rem">✓ Free · Self-paced · Certificate included</p>
+        </div>
+        <div class="cert-tier">
+          <div class="badge-icon">📗</div>
+          <div class="tier-label">Foundational</div>
+          <h4>Cloud Practitioner</h4>
+          <p>AWS CLF-C02 · Azure AZ-900 · GCP Digital Leader</p>
+          <p style="margin-top:0.4rem;font-size:0.72rem">Best first vendor cert</p>
+        </div>
+        <div class="cert-tier">
+          <div class="badge-icon">📘</div>
+          <div class="tier-label">Associate</div>
+          <h4>Cloud Associate</h4>
+          <p>AWS SAA / DVA · Azure AZ-104 · GCP ACE</p>
+          <p style="margin-top:0.4rem;font-size:0.72rem">Job-ready level</p>
+        </div>
+        <div class="cert-tier">
+          <div class="badge-icon">📕</div>
+          <div class="tier-label">Professional</div>
+          <h4>Expert Level</h4>
+          <p>AWS SAP / DevOps Pro · Azure AZ-305 · GCP PCA</p>
+          <p style="margin-top:0.4rem;font-size:0.72rem">Senior roles</p>
+        </div>
+      </div>
+      <pre class="diagram" style="max-width:100%;margin-top:1rem">Workshop Cert → Cloud Practitioner (AZ-900/CLF) → Associate (AZ-104/SAA) → Professional → Specialization</pre>
+      <table style="margin-top:0.75rem">
+        <thead><tr><th>Provider</th><th>Entry</th><th>Associate</th><th>Professional</th></tr></thead>
+        <tbody>
+          <tr><td><strong>AWS</strong></td><td>Cloud Practitioner</td><td>Solutions Architect Assoc.</td><td>Solutions Architect Pro</td></tr>
+          <tr><td><strong>Azure</strong></td><td>AZ-900 Fundamentals</td><td>AZ-104 Administrator</td><td>AZ-305 Architect</td></tr>
+          <tr><td><strong>Google Cloud</strong></td><td>Digital Leader</td><td>Cloud Engineer (ACE)</td><td>Cloud Architect (PCA)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 13 Workshop Certificate -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <p class="slide-label">Your Certificate</p>
+      <h2>Earn Your Workshop Certificate</h2>
+      <div class="two-col">
+        <div>
+          <ul class="bullets">
+            <li>Complete <strong>80%+</strong> of course lessons</li>
+            <li>Pass the <strong>Final Exam</strong> with 70% or higher</li>
+            <li>Finish hands-on labs (VM, Docker, Terraform)</li>
+            <li>Generate printable certificate in the Academy</li>
+          </ul>
+          <div class="chart-box" style="margin-top:1rem">
+            <div class="chart-title">Final Exam Score Levels</div>
+            <div class="bar-chart">
+              <div class="bar-row"><span class="bar-label">90–100%</span><div class="bar-track"><div class="bar-fill green" style="--w:100%">🏆 Cloud Champion</div></div></div>
+              <div class="bar-row"><span class="bar-label">80–89%</span><div class="bar-track"><div class="bar-fill cloud" style="--w:85%">🚀 Excellent</div></div></div>
+              <div class="bar-row"><span class="bar-label">70–79%</span><div class="bar-track"><div class="bar-fill azure" style="--w:75%">👍 Good — Cert unlocked</div></div></div>
+              <div class="bar-row"><span class="bar-label">&lt;70%</span><div class="bar-track"><div class="bar-fill other" style="--w:50%">📚 Review & retry</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="border:2px solid #c9a227;text-align:center;padding:2rem">
+          <div style="font-size:2rem">🎓</div>
+          <h3 style="color:#c9a227;margin:0.5rem 0">Certificate of Completion</h3>
+          <p style="font-size:0.9rem;color:var(--text)"><strong>Cloud Computing Fundamentals</strong></p>
+          <p style="font-size:0.8rem;margin-top:0.75rem">Awarded to students who complete the Cloud Computing Academy course and pass the final examination.</p>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:1rem">Open <strong>certificate</strong> section in index.html → Generate Certificate</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 Closing -->
+    <section class="slide">
+      <span class="slide-num"></span>
+      <div class="emoji-big">🚀</div>
+      <p class="slide-label">Next Steps</p>
+      <h2>Your Cloud Journey Starts Now</h2>
+      <ul class="bullets">
+        <li>Finish <strong>Cloud Computing Academy</strong> — lessons, quizzes, labs</li>
+        <li>Create a free <strong>AWS / Azure</strong> account and practice</li>
+        <li>Earn workshop certificate, then target <strong>AZ-900</strong> or <strong>AWS Cloud Practitioner</strong></li>
+        <li>Choose a <strong>specialization</strong>: Architect, DevOps, Security, or Data</li>
+        <li>Build portfolio projects and apply for <strong>Cloud / DevOps</strong> roles</li>
+      </ul>
+      <div class="highlight" style="font-size:1.1rem;margin-top:1.5rem">Questions? ☁️ Let's build in the cloud!</div>
+      <p class="meta">Thank you for attending the Cloud Computing Workshop 🎓</p>
+    </section>
+
+  </div>
+
+  <div class="controls">
+    <button id="prevBtn" aria-label="Previous slide" disabled>‹</button>
+    <span id="slideCounter">1 / 14</span>
+    <button id="nextBtn" aria-label="Next slide">›</button>
+  </div>
+
+  <p class="kbd-hint"><kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>F</kbd> fullscreen</p>
+
+  <script>
+    (function () {
+      const slides = document.querySelectorAll('.slide');
+      const total = slides.length;
+      let current = 0;
+
+      slides.forEach((s, i) => {
+        const num = s.querySelector('.slide-num');
+        if (num) num.textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
+      });
+
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const counter = document.getElementById('slideCounter');
+      const progressFill = document.getElementById('progressFill');
+
+      function goTo(index) {
+        if (index < 0 || index >= total) return;
+        slides[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+        counter.textContent = (current + 1) + ' / ' + total;
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === total - 1;
+        slides[current].scrollTop = 0;
+      }
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+      nextBtn.addEventListener('click', () => goTo(current + 1));
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); goTo(current + 1); }
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goTo(current - 1); }
+        if (e.key === 'Home') goTo(0);
+        if (e.key === 'End') goTo(total - 1);
+        if (e.key === 'f' || e.key === 'F') {
+          if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+          else document.exitFullscreen();
+        }
+      });
+
+      let touchStartX = 0;
+      document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+      document.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) goTo(diff > 0 ? current + 1 : current - 1);
+      });
+
+      goTo(0);
+    })();
+  </script>
+</body>
+</html>

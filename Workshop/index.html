@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud Computing Fundamentals Workshop</title>
+  <meta name="description" content="Professional Cloud Computing Fundamentals workshop - from physical servers to modern cloud infrastructure." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+
+  <style>
+    :root {
+      --bg-deep: #060b16;
+      --bg-navy: #0a1628;
+      --bg-blue: #0d2137;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #22d3ee;
+      --accent-purple: #a78bfa;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-red: #f87171;
+      --text: #e8eef7;
+      --text-muted: #94a3b8;
+      --card: rgba(15, 30, 55, 0.75);
+      --border: rgba(59, 130, 246, 0.25);
+      --glow: rgba(34, 211, 238, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    html, body, .reveal {
+      height: 100%;
+      width: 100%;
+    }
+
+    .reveal {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 28px;
+      color: var(--text);
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal .slides > section {
+      padding: 28px 48px !important;
+      height: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin: 0 0 0.4em;
+      line-height: 1.15;
+    }
+
+    .reveal h1 { font-size: 3.2em; }
+    .reveal h2 { font-size: 2.1em; }
+    .reveal h3 { font-size: 1.15em; color: var(--accent-cyan); }
+
+    .reveal p, .reveal li {
+      font-size: 0.78em;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+
+    .reveal strong { color: #fff; font-weight: 600; }
+
+    .reveal .subtitle {
+      font-size: 1.05em;
+      color: var(--accent-cyan);
+      font-weight: 500;
+      margin-bottom: 0.6em;
+    }
+
+    .reveal .eyebrow {
+      font-size: 0.55em;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent-purple);
+      font-weight: 600;
+      margin-bottom: 0.5em;
+    }
+
+    .reveal code, .reveal .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Background atmosphere */
+    .reveal .backgrounds .slide-background {
+      background: radial-gradient(ellipse at 20% 20%, #122848 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, #1a1040 0%, transparent 45%),
+                  linear-gradient(160deg, #060b16 0%, #0a1628 45%, #0d1a2e 100%);
+    }
+
+    .particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      opacity: 0.35;
+      animation: float-particle 12s linear infinite;
+    }
+
+    @keyframes float-particle {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      10% { opacity: 0.4; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .slide-inner {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Cards & layout helpers */
+    .cards {
+      display: grid;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .cards-2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-4 { grid-template-columns: repeat(4, 1fr); }
+    .cards-5 { grid-template-columns: repeat(5, 1fr); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      backdrop-filter: blur(8px);
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      border-color: rgba(34, 211, 238, 0.45);
+      box-shadow: 0 0 24px var(--glow);
+    }
+
+    .card i {
+      color: var(--accent-cyan);
+      font-size: 1.1em;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .card h4 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.72em;
+      color: #fff;
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+
+    .card p {
+      font-size: 0.55em;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid var(--border);
+      color: var(--accent-cyan);
+      font-size: 0.5em;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 12px;
+    }
+
+    .compare-col {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .compare-col.old { border-color: rgba(248, 113, 113, 0.35); }
+    .compare-col.new { border-color: rgba(52, 211, 153, 0.35); }
+
+    .compare-vs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      color: var(--accent-purple);
+      font-size: 0.7em;
+    }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .flow-v {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .flow-node {
+      background: linear-gradient(135deg, rgba(15, 40, 70, 0.9), rgba(20, 30, 60, 0.9));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-size: 0.55em;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      min-width: 110px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .flow-node.cyan { border-color: rgba(34, 211, 238, 0.5); color: var(--accent-cyan); }
+    .flow-node.purple { border-color: rgba(167, 139, 250, 0.5); color: var(--accent-purple); }
+    .flow-node.green { border-color: rgba(52, 211, 153, 0.5); color: var(--accent-green); }
+    .flow-node.amber { border-color: rgba(251, 191, 36, 0.5); color: var(--accent-amber); }
+    .flow-node.red { border-color: rgba(248, 113, 113, 0.5); color: var(--accent-red); }
+    .flow-node.failed {
+      opacity: 0.35;
+      text-decoration: line-through;
+      border-color: rgba(248, 113, 113, 0.6);
+      color: var(--accent-red);
+    }
+
+    .flow-arrow {
+      color: var(--accent-blue);
+      font-size: 0.7em;
+      opacity: 0.8;
+    }
+
+    .arch-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .arch-label {
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      background: var(--bg-navy);
+      padding: 2px 10px;
+      font-size: 0.42em;
+      color: var(--accent-purple);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Tables */
+    .reveal table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.55em;
+      margin-top: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .reveal table th {
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--accent-cyan);
+      font-weight: 600;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .reveal table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.12);
+      color: var(--text-muted);
+      background: rgba(10, 22, 40, 0.5);
+    }
+
+    .reveal table tr:last-child td { border-bottom: none; }
+
+    .cell-customer {
+      background: rgba(59, 130, 246, 0.25) !important;
+      color: #93c5fd !important;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .cell-provider {
+      background: rgba(52, 211, 153, 0.2) !important;
+      color: #6ee7b7 !important;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Terminal */
+    .terminal {
+      background: #0c1220;
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      border-radius: 10px;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.48em;
+      margin-top: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      text-align: left;
+    }
+
+    .terminal-bar {
+      background: #141c2e;
+      padding: 8px 12px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .terminal-bar span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal-bar .r { background: #f87171; }
+    .terminal-bar .y { background: #fbbf24; }
+    .terminal-bar .g { background: #34d399; }
+    .terminal-bar .title {
+      margin-left: 8px;
+      color: var(--text-muted);
+      font-size: 0.9em;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: none;
+    }
+
+    .terminal pre {
+      margin: 0;
+      padding: 14px 16px;
+      color: #a5f3fc;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .terminal .cmt { color: #64748b; }
+    .terminal .cmd { color: #22d3ee; }
+    .terminal .ok { color: #34d399; }
+
+    /* Quiz */
+    .quiz {
+      background: var(--card);
+      border: 1px solid rgba(167, 139, 250, 0.35);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-top: 14px;
+    }
+
+    .quiz-q {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75em;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .quiz-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55em;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .quiz-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    }
+
+    .quiz-answer {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      border-radius: 10px;
+      color: var(--accent-green);
+      font-size: 0.65em;
+      font-weight: 600;
+    }
+
+    .quiz-answer.show { display: block; animation: fadeUp 0.4s ease; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Roadmap / timeline */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .roadmap-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 0.42em;
+      position: relative;
+    }
+
+    .roadmap-item .num {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      font-size: 1.15em;
+      margin-bottom: 4px;
+    }
+
+    .roadmap-item span:last-child {
+      color: var(--text-muted);
+      line-height: 1.3;
+      display: block;
+    }
+
+    /* Staircase */
+    .stairs {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      margin-top: 20px;
+      height: 320px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .stair {
+      flex: 1;
+      min-width: 72px;
+      background: linear-gradient(180deg, rgba(59,130,246,0.35), rgba(15,30,55,0.9));
+      border: 1px solid var(--border);
+      border-radius: 10px 10px 4px 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px 6px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .stair:hover { transform: translateY(-4px); border-color: var(--accent-cyan); }
+
+    .stair .s-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.4em;
+      color: var(--accent-cyan);
+      margin-bottom: 4px;
+    }
+
+    .stair .s-label {
+      font-size: 0.38em;
+      color: #fff;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    /* Cert paths */
+    .cert-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .cert-col {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .cert-col h4 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.65em;
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cert-col.aws h4 { color: #f59e0b; }
+    .cert-col.azure h4 { color: #38bdf8; }
+    .cert-col.gcp h4 { color: #34d399; }
+
+    .cert-step {
+      font-size: 0.42em;
+      color: var(--text-muted);
+      padding: 6px 8px;
+      border-left: 2px solid var(--accent-blue);
+      margin-bottom: 4px;
+      line-height: 1.35;
+      background: rgba(59,130,246,0.06);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .cert-step strong { color: #fff; display: block; font-size: 1.05em; }
+    .cert-arrow {
+      text-align: center;
+      color: var(--accent-purple);
+      font-size: 0.4em;
+      margin: 2px 0;
+    }
+
+    /* Title slide hero */
+    .title-hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100%;
+      min-height: 0;
+      max-height: 100%;
+      overflow: hidden;
+    }
+
+    .title-hero h1 {
+      font-size: 3.6em;
+      background: linear-gradient(135deg, #fff 20%, #22d3ee 60%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.15em;
+    }
+
+    .infra-illustration {
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 380px;
+      height: 380px;
+    }
+
+    .infra-ring {
+      position: absolute;
+      inset: 40px;
+      border: 1px dashed rgba(34, 211, 238, 0.25);
+      border-radius: 50%;
+      animation: spin-slow 40s linear infinite;
+    }
+
+    .infra-ring-2 {
+      inset: 80px;
+      border-color: rgba(167, 139, 250, 0.2);
+      animation-direction: reverse;
+      animation-duration: 30s;
+    }
+
+    @keyframes spin-slow {
+      to { transform: rotate(360deg); }
+    }
+
+    .infra-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e3a8a, #0e7490);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 40px rgba(34, 211, 238, 0.35);
+      font-size: 2em;
+      color: var(--accent-cyan);
+    }
+
+    .infra-node {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.35em;
+      color: var(--text-muted);
+      gap: 4px;
+    }
+
+    .infra-node i { font-size: 1.6em; color: var(--accent-cyan); }
+    .infra-node.n1 { top: 20px; left: 50%; transform: translateX(-50%); }
+    .infra-node.n2 { top: 50%; right: 10px; transform: translateY(-50%); }
+    .infra-node.n3 { bottom: 20px; left: 50%; transform: translateX(-50%); }
+    .infra-node.n4 { top: 50%; left: 10px; transform: translateY(-50%); }
+    .infra-node.n5 { top: 70px; right: 55px; }
+    .infra-node.n6 { bottom: 70px; left: 55px; }
+
+    /* Shared responsibility */
+    .split-resp {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .resp-col {
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .resp-col.provider {
+      background: rgba(52, 211, 153, 0.08);
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+
+    .resp-col.customer {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+
+    .resp-col h4 {
+      font-size: 0.65em;
+      margin: 0 0 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .resp-col ul {
+      margin: 0;
+      padding-left: 1.1em;
+    }
+
+    .resp-col li {
+      font-size: 0.55em;
+      margin-bottom: 4px;
+    }
+
+    /* Traffic counter */
+    .traffic-meter {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .traffic-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7em;
+      padding: 10px 18px;
+      border-radius: 10px;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid var(--border);
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    .traffic-pill.hot {
+      background: rgba(248,113,113,0.15);
+      border-color: rgba(248,113,113,0.4);
+      color: var(--accent-red);
+      animation: pulse-soft 1.5s ease infinite;
+    }
+
+    @keyframes pulse-soft {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.3); }
+      50% { box-shadow: 0 0 20px 4px rgba(248,113,113,0.2); }
+    }
+
+    /* Countdown */
+    .countdown {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 3.5em;
+      color: var(--accent-cyan);
+      text-align: center;
+      margin: 20px 0;
+      font-weight: 700;
+      text-shadow: 0 0 40px rgba(34, 211, 238, 0.4);
+    }
+
+    .takeaways {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .takeaway {
+      font-size: 0.58em;
+      padding: 12px 14px;
+      background: var(--card);
+      border-left: 3px solid var(--accent-cyan);
+      border-radius: 0 10px 10px 0;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .takeaway span {
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      display: block;
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+
+    /* UI chrome */
+    #progress-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan), var(--accent-purple));
+      width: 0%;
+      z-index: 100;
+      transition: width 0.35s ease;
+    }
+
+    #slide-chrome {
+      position: fixed;
+      bottom: 14px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 90;
+      pointer-events: none;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    #section-label {
+      background: rgba(15, 30, 55, 0.85);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 8px;
+      letter-spacing: 0.12em;
+      font-size: 10px;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    #slide-counter {
+      background: rgba(15, 30, 55, 0.85);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 8px;
+    }
+
+    #help-hint {
+      position: fixed;
+      top: 14px;
+      right: 18px;
+      z-index: 90;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(15, 30, 55, 0.8);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    #help-hint kbd {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(59,130,246,0.2);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--accent-cyan);
+      font-size: 10px;
+    }
+
+    .note-hint {
+      font-size: 0.45em;
+      color: var(--text-muted);
+      margin-top: 12px;
+      opacity: 0.7;
+    }
+
+    .highlight-box {
+      background: rgba(167, 139, 250, 0.1);
+      border: 1px solid rgba(167, 139, 250, 0.35);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-top: 12px;
+      font-size: 0.65em;
+      color: #ddd6fe;
+      font-weight: 500;
+    }
+
+    .warning-box {
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 0.6em;
+      color: var(--accent-amber);
+      font-weight: 600;
+    }
+
+    .side-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .side-tag {
+      font-size: 0.42em;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(15,30,55,0.9);
+      border: 1px dashed var(--border);
+      color: var(--accent-purple);
+      font-weight: 600;
+    }
+
+    .deploy-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .deploy-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+      min-height: 180px;
+    }
+
+    .deploy-card i {
+      font-size: 1.4em;
+      color: var(--accent-cyan);
+      margin-bottom: 10px;
+    }
+
+    .deploy-card h4 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.62em;
+      color: #fff;
+      margin: 0 0 8px;
+    }
+
+    .deploy-card p {
+      font-size: 0.45em;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .deploy-viz {
+      height: 48px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .viz-block {
+      width: 22px;
+      height: 28px;
+      border-radius: 4px;
+      background: rgba(59,130,246,0.4);
+      border: 1px solid var(--accent-blue);
+    }
+
+    .viz-block.private { background: rgba(167,139,250,0.4); border-color: var(--accent-purple); }
+    .viz-block.hybrid-p { background: rgba(167,139,250,0.4); border-color: var(--accent-purple); }
+    .viz-block.hybrid-u { background: rgba(34,211,238,0.4); border-color: var(--accent-cyan); }
+    .viz-block.multi-a { background: rgba(251,191,36,0.4); border-color: var(--accent-amber); }
+    .viz-block.multi-b { background: rgba(52,211,153,0.4); border-color: var(--accent-green); }
+    .viz-block.multi-c { background: rgba(59,130,246,0.4); border-color: var(--accent-blue); }
+
+    .char-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .char-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+
+    .char-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1em;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      line-height: 1;
+      padding-top: 4px;
+    }
+
+    .char-item h4 {
+      font-size: 0.6em;
+      margin: 0 0 2px;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .char-item p {
+      font-size: 0.48em;
+      margin: 0;
+    }
+
+    .prod-arch {
+      display: grid;
+      grid-template-columns: 1fr 2.2fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+      align-items: start;
+    }
+
+    .prod-side {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prod-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .qa-slide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      min-height: 65vh;
+    }
+
+    .qa-slide h1 {
+      font-size: 5em;
+      background: linear-gradient(135deg, #fff, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .problem {
+      background: rgba(248, 113, 113, 0.08);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.48em;
+      color: #fca5a5;
+      text-align: center;
+    }
+
+    .problem i {
+      display: block;
+      font-size: 1.4em;
+      margin-bottom: 6px;
+      color: var(--accent-red);
+    }
+
+    .dc-visual {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+
+    .dc-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 0.45em;
+      min-width: 100px;
+    }
+
+    .dc-item i {
+      display: block;
+      font-size: 1.5em;
+      color: var(--accent-amber);
+      margin-bottom: 6px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .layer-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .layer {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.55em;
+      font-weight: 600;
+      text-align: center;
+      color: #fff;
+    }
+
+    .layer.hw { background: rgba(100,116,139,0.4); }
+    .layer.virt { background: rgba(59,130,246,0.35); }
+    .layer.vm { background: rgba(34,211,238,0.3); }
+    .layer.os { background: rgba(167,139,250,0.35); }
+    .layer.app { background: rgba(52,211,153,0.35); }
+
+    .spectrum {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .spectrum div {
+      flex: 1;
+      padding: 16px 10px;
+      text-align: center;
+      font-size: 0.55em;
+      font-weight: 700;
+    }
+
+    .spectrum .iaas { background: rgba(59,130,246,0.3); color: #93c5fd; }
+    .spectrum .paas { background: rgba(167,139,250,0.3); color: #ddd6fe; }
+    .spectrum .saas { background: rgba(52,211,153,0.3); color: #6ee7b7; }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      font-size: 0.45em;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend i {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .legend .cust { background: rgba(59, 130, 246, 0.6); }
+    .legend .prov { background: rgba(52, 211, 153, 0.6); }
+
+    .reveal .controls {
+      color: var(--accent-cyan);
+    }
+
+    .reveal .progress {
+      display: none !important;
+    }
+
+    .reveal .slide-number {
+      display: none !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .reveal { font-size: 22px; }
+      .infra-illustration { display: none; }
+      .cards-5 { grid-template-columns: repeat(3, 1fr); }
+      .cards-4, .deploy-grid { grid-template-columns: repeat(2, 1fr); }
+      .roadmap { grid-template-columns: repeat(3, 1fr); }
+      .cert-grid { grid-template-columns: 1fr; }
+      .prod-arch { grid-template-columns: 1fr; }
+      .takeaways { grid-template-columns: 1fr; }
+      .title-hero h1 { font-size: 2.4em; }
+      #help-hint { display: none; }
+    }
+
+    @media (max-width: 700px) {
+      .reveal { font-size: 18px; }
+      .reveal .slides section { padding: 16px 18px; }
+      .cards-2, .cards-3, .two-col, .three-col, .split-resp, .compare {
+        grid-template-columns: 1fr;
+      }
+      .compare { grid-template-columns: 1fr; }
+      .compare-vs { display: none; }
+      .stairs { height: auto; flex-wrap: wrap; height: auto; }
+      .stair { min-height: 80px; }
+      .problems-grid { grid-template-columns: repeat(2, 1fr); }
+      .qa-slide h1 { font-size: 2.8em; }
+    }
+
+    .reveal .fragment.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="help-hint">
+    <kbd>&larr;</kbd> Prev | <kbd>&rarr;</kbd> Next | <kbd>F</kbd> Fullscreen | <kbd>Esc</kbd> Overview | <kbd>S</kbd> Notes
+  </div>
+  <div id="slide-chrome">
+    <div id="section-label">CLOUD FUNDAMENTALS</div>
+    <div id="slide-counter">01 / 15</div>
+  </div>
+  <div id="progress-bar"></div>
+
+  <div class="reveal">
+    <div class="slides">
+
+<!-- 01 TITLE -->
+      <section data-section="CLOUD FUNDAMENTALS">
+        <div class="grid-overlay"></div>
+        <div class="particles" id="particles-title"></div>
+        <div class="slide-inner title-hero">
+          <div class="eyebrow">Cloud Computing Fundamentals Workshop</div>
+          <h1>CLOUD<br>COMPUTING</h1>
+          <p class="subtitle">From Physical Servers to Modern Cloud Infrastructure</p>
+          <p style="font-size:0.55em;max-width:520px;">
+            Concepts first | 60-90 minutes | Beginner friendly
+          </p>
+          <div class="pill" style="margin-top:18px;"><i class="fa-solid fa-cloud"></i> Mental model before the console</div>
+        </div>
+        <div class="infra-illustration" aria-hidden="true">
+          <div class="infra-ring"></div>
+          <div class="infra-ring infra-ring-2"></div>
+          <div class="infra-center"><i class="fa-solid fa-cloud"></i></div>
+          <div class="infra-node n1"><i class="fa-solid fa-users"></i>Users</div>
+          <div class="infra-node n2"><i class="fa-solid fa-server"></i>Servers</div>
+          <div class="infra-node n3"><i class="fa-solid fa-database"></i>Database</div>
+          <div class="infra-node n4"><i class="fa-solid fa-hard-drive"></i>Storage</div>
+          <div class="infra-node n5"><i class="fa-solid fa-network-wired"></i>Network</div>
+          <div class="infra-node n6"><i class="fa-solid fa-shield-halved"></i>Security</div>
+        </div>
+        <aside class="notes">
+          Welcome. Goal: mental model of cloud architecture, not vendor trivia.
+          Example: renting an apartment vs buying land and building.
+          Ask: Who has used a cloud console? Who only uses SaaS?
+          Misconception: Cloud is just "someone else's computer."
+          Transition: Quick roadmap of what we cover today.
+        </aside>
+      </section>
+
+      <!-- 02 ROADMAP -->
+      <section data-section="CLOUD FUNDAMENTALS">
+        <div class="slide-inner">
+          <div class="eyebrow">Agenda</div>
+          <h2>What We Will Learn</h2>
+          <div class="roadmap" style="margin-top:16px;">
+            <div class="roadmap-item fragment"><span class="num">01</span><span>What &amp; Why</span></div>
+            <div class="roadmap-item fragment"><span class="num">02</span><span>Characteristics</span></div>
+            <div class="roadmap-item fragment"><span class="num">03</span><span>IaaS / PaaS / SaaS</span></div>
+            <div class="roadmap-item fragment"><span class="num">04</span><span>Deployment</span></div>
+            <div class="roadmap-item fragment"><span class="num">05</span><span>Providers</span></div>
+            <div class="roadmap-item fragment"><span class="num">06</span><span>Regions &amp; AZs</span></div>
+            <div class="roadmap-item fragment"><span class="num">07</span><span>Compute</span></div>
+            <div class="roadmap-item fragment"><span class="num">08</span><span>Storage &amp; Net</span></div>
+            <div class="roadmap-item fragment"><span class="num">09</span><span>Databases</span></div>
+            <div class="roadmap-item fragment"><span class="num">10</span><span>Security</span></div>
+            <div class="roadmap-item fragment"><span class="num">11</span><span>Scale &amp; HA</span></div>
+            <div class="roadmap-item fragment"><span class="num">12</span><span>DevOps</span></div>
+            <div class="roadmap-item fragment"><span class="num">13</span><span>Cert Path</span></div>
+            <div class="roadmap-item fragment"><span class="num">14</span><span>Architecture</span></div>
+            <div class="roadmap-item fragment"><span class="num">15</span><span>Build &amp; Next</span></div>
+          </div>
+        </div>
+        <aside class="notes">
+          Cloud fundamentals dominate; DevOps is brief near the end.
+          Ask: Which topic are you most curious about?
+          Misconception: Must learn everything at once  -  sequence matters.
+          Transition: Life before the cloud.
+        </aside>
+      </section>
+
+      <!-- 03 BEFORE + WHAT IS CLOUD -->
+      <section data-section="CLOUD FUNDAMENTALS">
+        <div class="slide-inner">
+          <div class="eyebrow">Fundamentals</div>
+          <h2>From Data Center to Cloud</h2>
+          <div class="two-col">
+            <div>
+              <h3 style="font-size:0.7em;color:var(--accent-amber);">Before Cloud</h3>
+              <div class="dc-visual" style="justify-content:flex-start;margin:8px 0;">
+                <div class="dc-item fragment" style="min-width:70px;padding:8px;"><i class="fa-solid fa-server"></i>Servers</div>
+                <div class="dc-item fragment" style="min-width:70px;padding:8px;"><i class="fa-solid fa-hard-drive"></i>Storage</div>
+                <div class="dc-item fragment" style="min-width:70px;padding:8px;"><i class="fa-solid fa-network-wired"></i>Network</div>
+                <div class="dc-item fragment" style="min-width:70px;padding:8px;"><i class="fa-solid fa-shield-halved"></i>Firewall</div>
+                <div class="dc-item fragment" style="min-width:70px;padding:8px;"><i class="fa-solid fa-database"></i>DB</div>
+                <div class="dc-item fragment" style="min-width:70px;padding:8px;"><i class="fa-solid fa-box-archive"></i>Backup</div>
+              </div>
+              <div class="problems-grid" style="grid-template-columns:1fr 1fr;gap:6px;">
+                <div class="problem fragment" style="padding:8px;font-size:0.42em;">High hardware cost</div>
+                <div class="problem fragment" style="padding:8px;font-size:0.42em;">Long provisioning</div>
+                <div class="problem fragment" style="padding:8px;font-size:0.42em;">Limited scalability</div>
+                <div class="problem fragment" style="padding:8px;font-size:0.42em;">Hard disaster recovery</div>
+                <div class="problem fragment" style="padding:8px;font-size:0.42em;">Maintenance burden</div>
+                <div class="problem fragment" style="padding:8px;font-size:0.42em;">Capacity planning</div>
+              </div>
+            </div>
+            <div>
+              <h3 style="font-size:0.7em;">What Is Cloud?</h3>
+              <div class="highlight-box fragment" style="font-size:0.58em;line-height:1.4;">
+                <strong>On-demand</strong> delivery of computing resources over the internet, with <strong>pay-as-you-go</strong> pricing.
+              </div>
+              <div class="side-tags fragment" style="margin-top:12px;gap:8px;">
+                <div class="side-tag">Compute</div>
+                <div class="side-tag">Storage</div>
+                <div class="side-tag">Networking</div>
+                <div class="side-tag">Databases</div>
+                <div class="side-tag">Security</div>
+                <div class="side-tag">Apps</div>
+              </div>
+              <div class="compare fragment" style="margin-top:14px;gap:10px;">
+                <div class="compare-col old" style="padding:12px;">
+                  <h3 style="color:var(--accent-red);font-size:0.5em;">Traditional</h3>
+                  <p style="font-size:0.45em;margin:0;color:#fff;">Buy -> Install -> Maintain -> Upgrade</p>
+                </div>
+                <div class="compare-vs" style="font-size:0.5em;">VS</div>
+                <div class="compare-col new" style="padding:12px;">
+                  <h3 style="color:var(--accent-green);font-size:0.5em;">Cloud</h3>
+                  <p style="font-size:0.45em;margin:0;color:#fff;">Request -> Use -> Scale -> Pay</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          CapEx vs OpEx. Weeks for a server vs minutes in cloud.
+          Ask: Has anyone waited days for IT to provision hardware?
+          Misconception: On-prem is always cheaper  -  TCO includes people, power, DR.
+          Transition: Why cloud won.
+        </aside>
+      </section>
+
+      <!-- 04 WHY + CHARACTERISTICS -->
+      <section data-section="CLOUD FUNDAMENTALS">
+        <div class="slide-inner">
+          <div class="eyebrow">Why Cloud</div>
+          <h2>Drivers &amp; 5 Essential Characteristics</h2>
+          <div class="cards cards-4" style="margin-top:8px;">
+            <div class="card fragment" style="padding:10px 12px;"><h4>Scalability</h4><p>Handle more load</p></div>
+            <div class="card fragment" style="padding:10px 12px;"><h4>Elasticity</h4><p>Grow &amp; shrink auto</p></div>
+            <div class="card fragment" style="padding:10px 12px;"><h4>Availability</h4><p>Survive failures</p></div>
+            <div class="card fragment" style="padding:10px 12px;"><h4>Global Reach</h4><p>Deploy worldwide</p></div>
+            <div class="card fragment" style="padding:10px 12px;"><h4>Speed</h4><p>Provision fast</p></div>
+            <div class="card fragment" style="padding:10px 12px;"><h4>Cost Model</h4><p>Pay for usage</p></div>
+            <div class="card fragment" style="padding:10px 12px;"><h4>Automation</h4><p>Infra as code</p></div>
+            <div class="card fragment" style="padding:10px 12px;"><h4>Managed Svcs</h4><p>Less ops burden</p></div>
+          </div>
+          <div class="char-list" style="margin-top:12px;gap:6px;">
+            <div class="char-item fragment" style="padding:8px 12px;">
+              <div class="char-num" style="font-size:0.9em;">01</div>
+              <div><h4>On-Demand Self-Service</h4><p>Provision yourself  -  launch a VM in minutes.</p></div>
+            </div>
+            <div class="char-item fragment" style="padding:8px 12px;">
+              <div class="char-num" style="font-size:0.9em;">02</div>
+              <div><h4>Broad Network Access</h4><p>Access from anywhere  -  laptop, phone, API.</p></div>
+            </div>
+            <div class="char-item fragment" style="padding:8px 12px;">
+              <div class="char-num" style="font-size:0.9em;">03</div>
+              <div><h4>Resource Pooling</h4><p>Shared multi-tenant capacity, isolated securely.</p></div>
+            </div>
+            <div class="char-item fragment" style="padding:8px 12px;">
+              <div class="char-num" style="font-size:0.9em;">04</div>
+              <div><h4>Rapid Elasticity</h4><p>Scale out/in quickly  -  often automatically.</p></div>
+            </div>
+            <div class="char-item fragment" style="padding:8px 12px;">
+              <div class="char-num" style="font-size:0.9em;">05</div>
+              <div><h4>Measured Service</h4><p>Usage metered and billed  -  pay per GB/hour.</p></div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          Scalability != elasticity. Elasticity = automatic adjust.
+          Ask: Which of the 8 drivers matters most to you?
+          Misconception: Cloud always saves money  -  bad design burns budget.
+          Transition: Who manages what? Service models.
+        </aside>
+      </section>
+
+      <!-- 05 SERVICE MODELS -->
+      <section data-section="SERVICE MODELS">
+        <div class="slide-inner">
+          <div class="eyebrow">Service Models</div>
+          <h2>IaaS | PaaS | SaaS</h2>
+          <div class="three-col" style="margin-top:10px;">
+            <div class="arch-box fragment">
+              <div class="arch-label">IaaS</div>
+              <h3 style="margin-top:6px;font-size:0.85em;">Infrastructure</h3>
+              <p style="font-size:0.45em;margin:6px 0;">VMs | Networks | Storage | Firewalls</p>
+              <p style="font-size:0.42em;color:var(--accent-cyan);">You manage: OS, runtime, app, data</p>
+              <div class="layer-stack" style="margin-top:8px;">
+                <div class="layer app" style="padding:6px;font-size:0.42em;">App / OS (you)</div>
+                <div class="layer virt" style="padding:6px;font-size:0.42em;">VM / Network</div>
+                <div class="layer hw" style="padding:6px;font-size:0.42em;">Hardware (provider)</div>
+              </div>
+            </div>
+            <div class="arch-box fragment">
+              <div class="arch-label">PaaS</div>
+              <h3 style="margin-top:6px;font-size:0.85em;">Platform</h3>
+              <p style="font-size:0.45em;margin:6px 0;">Managed runtimes | Managed DBs | App platforms</p>
+              <p style="font-size:0.42em;color:var(--accent-purple);">You focus on: application code</p>
+              <div class="flow-v" style="margin-top:8px;gap:3px;">
+                <div class="flow-node" style="padding:6px 10px;font-size:0.4em;min-width:80px;">Developer</div>
+                <span class="flow-arrow" style="font-size:0.5em;">&rarr;</span>
+                <div class="flow-node purple" style="padding:6px 10px;font-size:0.4em;min-width:80px;">Platform</div>
+                <span class="flow-arrow" style="font-size:0.5em;">&rarr;</span>
+                <div class="flow-node green" style="padding:6px 10px;font-size:0.4em;min-width:80px;">Infra</div>
+              </div>
+            </div>
+            <div class="arch-box fragment">
+              <div class="arch-label">SaaS</div>
+              <h3 style="margin-top:6px;font-size:0.85em;">Software</h3>
+              <p style="font-size:0.45em;margin:6px 0;">Gmail | M365 | Salesforce | Slack</p>
+              <p style="font-size:0.42em;color:var(--accent-green);">You consume: finished product</p>
+              <div class="highlight-box" style="margin-top:10px;font-size:0.42em;padding:10px;">
+                Provider manages more<br>Customer manages less
+              </div>
+            </div>
+          </div>
+          <div class="spectrum fragment" style="margin-top:14px;">
+            <div class="iaas">IaaS  -  more control</div>
+            <div class="paas">PaaS</div>
+            <div class="saas">SaaS  -  less ops</div>
+          </div>
+        </div>
+        <aside class="notes">
+          IaaS = rent server. PaaS = ship code. SaaS = use product.
+          Ask: Who patches the OS on IaaS? Customer.
+          Misconception: SaaS has zero security responsibility  -  you still own identities &amp; data.
+          Transition: Responsibility matrix + quick quiz.
+        </aside>
+      </section>
+
+      <!-- 06 COMPARISON + QUIZ -->
+      <section data-section="SERVICE MODELS">
+        <div class="slide-inner">
+          <div class="eyebrow">Responsibility</div>
+          <h2>IaaS vs PaaS vs SaaS</h2>
+          <div class="legend" style="margin-bottom:6px;">
+            <span><i class="cust"></i> Customer</span>
+            <span><i class="prov"></i> Provider</span>
+          </div>
+          <table style="font-size:0.48em;">
+            <thead><tr><th>Layer</th><th>IaaS</th><th>PaaS</th><th>SaaS</th></tr></thead>
+            <tbody>
+              <tr class="fragment"><td>Application</td><td class="cell-customer">Customer</td><td class="cell-customer">Customer</td><td class="cell-provider">Provider</td></tr>
+              <tr class="fragment"><td>Data</td><td class="cell-customer">Customer</td><td class="cell-customer">Customer</td><td class="cell-customer">Customer*</td></tr>
+              <tr class="fragment"><td>Runtime / OS</td><td class="cell-customer">Customer</td><td class="cell-provider">Provider</td><td class="cell-provider">Provider</td></tr>
+              <tr class="fragment"><td>Virtualization -> Network</td><td class="cell-provider">Provider</td><td class="cell-provider">Provider</td><td class="cell-provider">Provider</td></tr>
+            </tbody>
+          </table>
+          <div class="two-col" style="margin-top:10px;">
+            <div class="quiz" style="margin:0;padding:14px;">
+              <div class="quiz-q" style="font-size:0.58em;">Complete app like email?</div>
+              <button class="quiz-btn" onclick="revealAnswer(this)">Reveal</button>
+              <div class="quiz-answer">SaaS</div>
+            </div>
+            <div class="quiz" style="margin:0;padding:14px;">
+              <div class="quiz-q" style="font-size:0.58em;">Virtual server + full OS control?</div>
+              <button class="quiz-btn" onclick="revealAnswer(this)">Reveal</button>
+              <div class="quiz-answer">IaaS</div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          Animate layers. Data stays customer even in SaaS.
+          Ask: New internal web app  -  IaaS or PaaS?
+          Transition: How organizations consume cloud  -  deployment models &amp; providers.
+        </aside>
+      </section>
+
+      <!-- 07 DEPLOYMENT + PROVIDERS -->
+      <section data-section="DEPLOYMENT MODELS">
+        <div class="slide-inner">
+          <div class="eyebrow">Deployment &amp; Landscape</div>
+          <h2>Models &amp; Major Providers</h2>
+          <div class="deploy-grid" style="margin-top:8px;gap:8px;">
+            <div class="deploy-card fragment" style="min-height:auto;padding:12px;">
+              <h4>Public</h4>
+              <p>Shared provider infra</p>
+            </div>
+            <div class="deploy-card fragment" style="min-height:auto;padding:12px;">
+              <h4>Private</h4>
+              <p>Dedicated to one org</p>
+            </div>
+            <div class="deploy-card fragment" style="min-height:auto;padding:12px;">
+              <h4>Hybrid</h4>
+              <p>Private + Public linked</p>
+            </div>
+            <div class="deploy-card fragment" style="min-height:auto;padding:12px;">
+              <h4>Multi-Cloud</h4>
+              <p>Multiple providers</p>
+            </div>
+          </div>
+          <table style="margin-top:12px;font-size:0.48em;">
+            <thead><tr><th>Category</th><th>AWS</th><th>Azure</th><th>Google Cloud</th></tr></thead>
+            <tbody>
+              <tr class="fragment"><td>Compute</td><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
+              <tr class="fragment"><td>Object Storage</td><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
+              <tr class="fragment"><td>Kubernetes</td><td>EKS</td><td>AKS</td><td>GKE</td></tr>
+              <tr class="fragment"><td>Database</td><td>RDS</td><td>Azure Database</td><td>Cloud SQL</td></tr>
+              <tr class="fragment"><td>Serverless</td><td>Lambda</td><td>Azure Functions</td><td>Cloud Functions</td></tr>
+            </tbody>
+          </table>
+          <div class="warning-box fragment" style="margin-top:10px;">Learn <strong>concepts first</strong>. Provider names come second. Hybrid != Multi-Cloud.</div>
+        </div>
+        <aside class="notes">
+          Hybrid = private+public. Multi-cloud = 2+ publics.
+          Ask: Which cloud dominates jobs in your market?
+          Misconception: Must learn all three  -  pick one deeply first.
+          Transition: Inside a provider  -  regions, AZs, compute.
+        </aside>
+      </section>
+
+      <!-- 08 REGIONS + COMPUTE -->
+      <section data-section="CLOUD INFRASTRUCTURE">
+        <div class="slide-inner">
+          <div class="eyebrow">Infrastructure</div>
+          <h2>Regions, AZs &amp; Compute</h2>
+          <div class="two-col">
+            <div>
+              <div class="flow-v" style="margin:4px 0;gap:4px;">
+                <div class="flow-node cyan fragment" style="min-width:180px;padding:8px 14px;">Cloud Provider</div>
+                <span class="flow-arrow fragment">&rarr;</span>
+                <div class="flow-node purple fragment" style="min-width:180px;padding:8px 14px;">Region</div>
+                <span class="flow-arrow fragment">&rarr;</span>
+                <div class="flow" style="gap:8px;">
+                  <div class="flow-node green fragment" style="min-width:70px;padding:8px;">AZ-1</div>
+                  <div class="flow-node green fragment" style="min-width:70px;padding:8px;">AZ-2</div>
+                  <div class="flow-node green fragment" style="min-width:70px;padding:8px;">AZ-3</div>
+                </div>
+              </div>
+              <p class="fragment" style="font-size:0.48em;margin-top:8px;">
+                <strong>Region</strong> = geography | <strong>AZ</strong> = isolated location | Multi-AZ -> availability &amp; fault tolerance
+              </p>
+              <div class="quiz fragment" style="padding:12px;margin-top:8px;">
+                <div class="quiz-q" style="font-size:0.52em;">Why multiple AZs?</div>
+                <button class="quiz-btn" onclick="revealAnswer(this)">Reveal</button>
+                <div class="quiz-answer">High Availability / Fault Tolerance</div>
+              </div>
+            </div>
+            <div>
+              <div class="flow" style="margin:4px 0;gap:4px;justify-content:flex-start;">
+                <div class="flow-node fragment" style="min-width:auto;padding:8px 10px;font-size:0.42em;">Physical</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-node cyan fragment" style="min-width:auto;padding:8px 10px;font-size:0.42em;">VM</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-node purple fragment" style="min-width:auto;padding:8px 10px;font-size:0.42em;">Container</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-node amber fragment" style="min-width:auto;padding:8px 10px;font-size:0.42em;">K8s</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-node green fragment" style="min-width:auto;padding:8px 10px;font-size:0.42em;">Serverless</div>
+              </div>
+              <table style="font-size:0.45em;margin-top:8px;">
+                <thead><tr><th>Tech</th><th>Best For</th></tr></thead>
+                <tbody>
+                  <tr class="fragment"><td>VM</td><td>Full OS control</td></tr>
+                  <tr class="fragment"><td>Container</td><td>Portable apps</td></tr>
+                  <tr class="fragment"><td>Kubernetes</td><td>Orchestration</td></tr>
+                  <tr class="fragment"><td>Serverless</td><td>Event-driven</td></tr>
+                </tbody>
+              </table>
+              <div class="terminal fragment" style="margin-top:8px;">
+                <div class="terminal-bar"><span class="r"></span><span class="y"></span><span class="g"></span><span class="title">bash</span></div>
+                <pre><span class="cmd">docker build -t my-app .</span>
+<span class="cmd">docker run -p 8080:80 my-app</span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          Multi-AZ often enough for HA; multi-region for DR/global.
+          Containers usually run on VMs.
+          Ask: Where is your team on the compute spectrum?
+          Transition: Storage and networking.
+        </aside>
+      </section>
+
+      <!-- 09 STORAGE + NETWORKING -->
+      <section data-section="CLOUD INFRASTRUCTURE">
+        <div class="slide-inner">
+          <div class="eyebrow">Data Path</div>
+          <h2>Storage &amp; Networking</h2>
+          <div class="three-col" style="margin-top:6px;">
+            <div class="arch-box fragment" style="padding:12px;">
+              <div class="arch-label">Object</div>
+              <h3 style="font-size:0.7em;margin-top:4px;">Object</h3>
+              <p style="font-size:0.42em;">S3 / Blob / GCS | images, backups, static sites</p>
+            </div>
+            <div class="arch-box fragment" style="padding:12px;">
+              <div class="arch-label">Block</div>
+              <h3 style="font-size:0.7em;margin-top:4px;">Block</h3>
+              <p style="font-size:0.42em;">VM disks | databases | low latency</p>
+            </div>
+            <div class="arch-box fragment" style="padding:12px;">
+              <div class="arch-label">File</div>
+              <h3 style="font-size:0.7em;margin-top:4px;">File</h3>
+              <p style="font-size:0.42em;">Shared NFS/SMB | multi-server mounts</p>
+            </div>
+          </div>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="flow-v" style="gap:3px;">
+              <div class="flow-node cyan fragment" style="padding:7px 12px;">Internet</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node fragment" style="padding:7px 12px;">DNS</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node purple fragment" style="padding:7px 12px;">Load Balancer</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node fragment" style="padding:7px 12px;">VPC</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow" style="gap:8px;">
+                <div class="flow-node amber fragment" style="min-width:90px;padding:7px;">Public Subnet</div>
+                <div class="flow-node green fragment" style="min-width:90px;padding:7px;">Private Subnet</div>
+              </div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node fragment" style="padding:7px 12px;">App -> Database</div>
+            </div>
+            <div class="cards cards-2" style="gap:8px;">
+              <div class="card fragment" style="padding:10px;"><h4>VPC</h4><p>Isolated network</p></div>
+              <div class="card fragment" style="padding:10px;"><h4>Subnets</h4><p>Public / private</p></div>
+              <div class="card fragment" style="padding:10px;"><h4>IGW / NAT</h4><p>Ingress / egress</p></div>
+              <div class="card fragment" style="padding:10px;"><h4>Sec. Groups</h4><p>Virtual firewall</p></div>
+              <div class="card fragment" style="padding:10px;"><h4>Route Tables</h4><p>Traffic paths</p></div>
+              <div class="card fragment" style="padding:10px;"><h4>DNS</h4><p>Name -> IP</p></div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          DB almost never in public subnet. Object storage via API, not USB-style mount.
+          Ask: Should the database have a public IP?
+          Transition: Databases and security.
+        </aside>
+      </section>
+
+      <!-- 10 DATABASES + SECURITY -->
+      <section data-section="SECURITY">
+        <div class="slide-inner">
+          <div class="eyebrow">Data &amp; Trust</div>
+          <h2>Databases &amp; Security</h2>
+          <div class="two-col" style="margin-top:6px;">
+            <div class="card fragment" style="padding:12px;">
+              <h4>Relational</h4>
+              <p>MySQL | PostgreSQL | SQL Server | transactions &amp; relationships</p>
+            </div>
+            <div class="card fragment" style="padding:12px;">
+              <h4>NoSQL</h4>
+              <p>DynamoDB | MongoDB | Cosmos DB | flexible scale &amp; throughput</p>
+            </div>
+          </div>
+          <div class="flow fragment" style="margin:10px 0;gap:8px;">
+            <div class="flow-node" style="padding:8px 12px;">App</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node amber" style="padding:8px 12px;">Cache</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node cyan" style="padding:8px 12px;">Managed DB</div>
+          </div>
+          <p class="fragment" style="font-size:0.55em;margin:4px 0 8px;"><strong>Shared Responsibility</strong>  -  cloud is not automatically secure.</p>
+          <div class="split-resp" style="gap:10px;">
+            <div class="resp-col provider fragment" style="padding:12px;">
+              <h4 style="color:var(--accent-green);font-size:0.55em;">Provider</h4>
+              <ul><li>Physical DC &amp; hardware</li><li>Core cloud infrastructure</li></ul>
+            </div>
+            <div class="resp-col customer fragment" style="padding:12px;">
+              <h4 style="color:var(--accent-blue);font-size:0.55em;">Customer</h4>
+              <ul><li>IAM, apps, data, network config</li><li>Security settings &amp; passwords</li></ul>
+            </div>
+          </div>
+          <div class="side-tags fragment" style="margin-top:10px;">
+            <div class="side-tag">IAM</div>
+            <div class="side-tag">Least Privilege</div>
+            <div class="side-tag">MFA</div>
+            <div class="side-tag">Encryption</div>
+            <div class="side-tag">Secrets</div>
+            <div class="side-tag">Logging</div>
+            <div class="side-tag">Backups</div>
+          </div>
+        </div>
+        <aside class="notes">
+          Public bucket leaks = customer misconfig. Managed DB still needs RPO/RTO tests.
+          Ask: Who owns root MFA in your org?
+          Transition: Traffic spikes and failure design.
+        </aside>
+      </section>
+
+      <!-- 11 SCALE + HA -->
+      <section data-section="SCALABILITY & AVAILABILITY">
+        <div class="slide-inner">
+          <div class="eyebrow">Resilience</div>
+          <h2>Scalability &amp; High Availability</h2>
+          <div class="traffic-meter" style="margin:8px 0;">
+            <div class="traffic-pill fragment" style="font-size:0.55em;padding:8px 12px;">100</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="traffic-pill fragment" style="font-size:0.55em;padding:8px 12px;">1K</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="traffic-pill fragment" style="font-size:0.55em;padding:8px 12px;">10K</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="traffic-pill hot fragment" style="font-size:0.55em;padding:8px 12px;">100K</div>
+          </div>
+          <div class="cards cards-3" style="gap:8px;">
+            <div class="card fragment" style="padding:10px;"><h4>Vertical</h4><p>Bigger server</p></div>
+            <div class="card fragment" style="padding:10px;"><h4>Horizontal</h4><p>More servers</p></div>
+            <div class="card fragment" style="padding:10px;"><h4>Elasticity</h4><p>Auto adjust</p></div>
+          </div>
+          <div class="flow fragment" style="margin:12px 0;">
+            <div class="flow-node purple" style="padding:8px 12px;">Load Balancer</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node cyan" style="padding:8px 12px;">Auto Scaling</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node green" style="padding:8px 12px;">App x N</div>
+          </div>
+          <div class="flow-v fragment" style="gap:4px;margin-top:4px;">
+            <div class="flow" style="gap:10px;">
+              <div class="flow-node green" style="padding:8px;">App AZ-1</div>
+              <div class="flow-node red failed" style="padding:8px;">App AZ-2 X</div>
+              <div class="flow-node green" style="padding:8px;">App AZ-3</div>
+            </div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node cyan" style="padding:8px 14px;">Database (Multi-AZ)</div>
+          </div>
+          <div class="side-tags fragment" style="margin-top:8px;">
+            <div class="side-tag">Redundancy</div>
+            <div class="side-tag">Failover</div>
+            <div class="side-tag">Health Checks</div>
+            <div class="side-tag">Backups</div>
+            <div class="side-tag">DR</div>
+          </div>
+          <div class="quiz fragment" style="padding:12px;margin-top:8px;">
+            <div class="quiz-q" style="font-size:0.52em;">Traffic jumps 10x  -  what helps?</div>
+            <button class="quiz-btn" onclick="revealAnswer(this)">Reveal</button>
+            <div class="quiz-answer">Elasticity / Auto Scaling</div>
+          </div>
+        </div>
+        <aside class="notes">
+          Assume failure. Health checks stop routing to dead nodes.
+          Ask: HA vs Disaster Recovery  -  difference?
+          Transition: Brief DevOps  -  cloud enables automation.
+        </aside>
+      </section>
+
+      <!-- 12 DEVOPS (single slide) -->
+      <section data-section="DEVOPS">
+        <div class="slide-inner">
+          <div class="eyebrow">DevOps (brief)</div>
+          <h2>Cloud + Automation</h2>
+          <div class="flow" style="margin:8px 0;gap:4px;flex-wrap:wrap;">
+            <div class="flow-node fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">PLAN</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">CODE</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">BUILD</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">TEST</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node cyan fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">RELEASE</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node purple fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">DEPLOY</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">OPERATE</div>
+            <span class="flow-arrow">&rarr;</span>
+            <div class="flow-node green fragment" style="padding:7px 10px;font-size:0.4em;min-width:auto;">MONITOR</div>
+          </div>
+          <div class="two-col" style="margin-top:8px;">
+            <div class="flow-v" style="gap:3px;">
+              <div class="flow-node fragment" style="padding:7px 12px;">Developer -> Git</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node cyan fragment" style="padding:7px 12px;">CI: Build &amp; Test</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node purple fragment" style="padding:7px 12px;">Docker -> Registry</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node fragment" style="padding:7px 12px;">CD -> K8s / Cloud</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node amber fragment" style="padding:7px 12px;">Monitoring</div>
+            </div>
+            <div>
+              <div class="flow-v fragment" style="gap:3px;">
+                <div class="flow-node purple" style="padding:7px 12px;">Terraform</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-node" style="padding:7px 12px;">Infrastructure as Code</div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="flow-node cyan" style="padding:7px 12px;">Cloud Infrastructure</div>
+              </div>
+              <div class="terminal fragment" style="margin-top:8px;">
+                <div class="terminal-bar"><span class="r"></span><span class="y"></span><span class="g"></span><span class="title">main.tf</span></div>
+                <pre>resource "aws_instance" "web" {
+  <span class="cmt"># infrastructure definition</span>
+}</pre>
+              </div>
+              <div class="side-tags fragment" style="margin-top:8px;">
+                <div class="side-tag">Git</div>
+                <div class="side-tag">Docker</div>
+                <div class="side-tag">K8s</div>
+                <div class="side-tag">Terraform</div>
+                <div class="side-tag">Prometheus</div>
+                <div class="side-tag">Grafana</div>
+              </div>
+            </div>
+          </div>
+          <div class="quiz fragment" style="padding:12px;margin-top:8px;">
+            <div class="quiz-q" style="font-size:0.52em;">What does Terraform provide?</div>
+            <button class="quiz-btn" onclick="revealAnswer(this)">Reveal</button>
+            <div class="quiz-answer">Infrastructure as Code</div>
+          </div>
+          <div class="highlight-box fragment" style="font-size:0.55em;margin-top:8px;">DevOps = <strong>Automation + Collaboration + Continuous Delivery</strong></div>
+        </div>
+        <aside class="notes">
+          Keep brief  -  not a DevOps deep dive. Cloud enables the practice.
+          Misconception: DevOps = a tool. It's culture + automation.
+          Transition: Certification roadmap.
+        </aside>
+      </section>
+
+      <!-- 13 CERTIFICATIONS -->
+      <section data-section="CERTIFICATION PATH">
+        <div class="slide-inner">
+          <div class="eyebrow">Career</div>
+          <h2>Cloud Certification Path</h2>
+          <div class="cert-grid" style="margin-top:8px;gap:10px;">
+            <div class="cert-col aws fragment" style="padding:10px;">
+              <h4 style="font-size:0.55em;"><i class="fa-brands fa-aws"></i> AWS</h4>
+              <div class="cert-step" style="font-size:0.38em;"><strong>Cloud Practitioner</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;"><strong>SA / Developer / CloudOps Associate</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;"><strong>SA Pro | DevOps Pro</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;">Specialty: Security | Networking* | ML</div>
+            </div>
+            <div class="cert-col azure fragment" style="padding:10px;">
+              <h4 style="font-size:0.55em;"><i class="fa-brands fa-microsoft"></i> Azure</h4>
+              <div class="cert-step" style="font-size:0.38em;"><strong>AZ-900 Fundamentals</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;"><strong>AZ-104 Admin | AZ-204 Dev*</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;"><strong>AZ-305 Architect | AZ-400 DevOps</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;">Security / specialty roles</div>
+            </div>
+            <div class="cert-col gcp fragment" style="padding:10px;">
+              <h4 style="font-size:0.55em;"><i class="fa-brands fa-google"></i> Google Cloud</h4>
+              <div class="cert-step" style="font-size:0.38em;"><strong>Cloud Digital Leader</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;"><strong>Associate Cloud Engineer</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;"><strong>Cloud Architect | DevOps Engineer</strong></div>
+              <div class="cert-arrow">v</div>
+              <div class="cert-step" style="font-size:0.38em;">Security | Network | Data | ML</div>
+            </div>
+          </div>
+          <p class="note-hint">* Advanced Networking Specialty retires Dec 31, 2026. * Confirm current exams on official sites  -  catalogs change.</p>
+          <div class="warning-box fragment">Certifications validate knowledge. <strong>Projects demonstrate ability.</strong></div>
+        </div>
+        <aside class="notes">
+          Pick ONE cloud. CloudOps replaced SysOps. Verify official catalogs before registering.
+          Ask: Cert first or project first? Ideal: both in parallel.
+          Transition: Put it all together  -  architecture + how to start.
+        </aside>
+      </section>
+
+      <!-- 14 ARCHITECTURE + LEARN + PROJECTS -->
+      <section data-section="REAL WORLD" id="slide-prod-arch">
+        <div class="slide-inner">
+          <div class="eyebrow">Real World</div>
+          <h2>Architecture | Learn | Build</h2>
+          <div class="prod-arch" style="margin-top:4px;">
+            <div class="prod-side">
+              <div class="side-tag fragment">IAM</div>
+              <div class="side-tag fragment">Security</div>
+              <div class="side-tag fragment">Terraform</div>
+            </div>
+            <div class="prod-main" style="gap:2px;">
+              <div class="flow-node cyan fragment" style="padding:6px 12px;font-size:0.45em;">Users -> DNS -> CDN/WAF -> LB</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow-node amber fragment" style="padding:6px 12px;font-size:0.45em;">K8s / Compute -> Application</div>
+              <span class="flow-arrow fragment">&rarr;</span>
+              <div class="flow" style="gap:6px;">
+                <div class="flow-node green fragment" style="padding:6px 10px;min-width:70px;font-size:0.4em;">Cache</div>
+                <div class="flow-node cyan fragment" style="padding:6px 10px;min-width:70px;font-size:0.4em;">Database</div>
+                <div class="flow-node purple fragment" style="padding:6px 10px;min-width:70px;font-size:0.4em;">Object Store</div>
+              </div>
+            </div>
+            <div class="prod-side">
+              <div class="side-tag fragment">Monitoring</div>
+              <div class="side-tag fragment">Logging</div>
+              <div class="side-tag fragment">CI/CD</div>
+            </div>
+          </div>
+          <div class="stairs" style="height:140px;margin-top:12px;">
+            <div class="stair fragment" style="height:30%;"><div class="s-num">1</div><div class="s-label">Linux</div></div>
+            <div class="stair fragment" style="height:38%;"><div class="s-num">2</div><div class="s-label">Network</div></div>
+            <div class="stair fragment" style="height:46%;"><div class="s-num">3</div><div class="s-label">Git</div></div>
+            <div class="stair fragment" style="height:54%;"><div class="s-num">4</div><div class="s-label">1 Cloud</div></div>
+            <div class="stair fragment" style="height:62%;"><div class="s-num">5</div><div class="s-label">C+S+N</div></div>
+            <div class="stair fragment" style="height:70%;"><div class="s-num">6</div><div class="s-label">IAM</div></div>
+            <div class="stair fragment" style="height:78%;"><div class="s-num">7</div><div class="s-label">Docker</div></div>
+            <div class="stair fragment" style="height:86%;"><div class="s-num">8</div><div class="s-label">Terraform</div></div>
+            <div class="stair fragment" style="height:92%;"><div class="s-num">9</div><div class="s-label">K8s</div></div>
+            <div class="stair fragment" style="height:96%;"><div class="s-num">10</div><div class="s-label">CI/CD</div></div>
+            <div class="stair fragment" style="height:100%;"><div class="s-num">11</div><div class="s-label">Projects</div></div>
+          </div>
+          <div class="side-tags fragment" style="margin-top:8px;justify-content:center;">
+            <div class="side-tag">Static site</div>
+            <div class="side-tag">Linux web server</div>
+            <div class="side-tag">Docker app</div>
+            <div class="side-tag">CI/CD</div>
+            <div class="side-tag">K8s app</div>
+            <div class="side-tag">Terraform infra</div>
+            <div class="side-tag">HA production</div>
+          </div>
+          <p class="fragment note-hint" style="text-align:center;margin-top:6px;"><strong>Projects &gt; Memorization</strong></p>
+        </div>
+        <aside class="notes">
+          Trace a user request end-to-end. Don't skip Linux/networking for K8s hype.
+          Ask: Where are you on the staircase? Commit to one project in 14 days.
+          Transition: Design challenge + takeaways.
+        </aside>
+      </section>
+
+      <!-- 15 CHALLENGE + TAKEAWAYS + QA -->
+      <section data-section="KEY TAKEAWAYS">
+        <div class="grid-overlay"></div>
+        <div class="particles" id="particles-qa"></div>
+        <div class="slide-inner">
+          <div class="eyebrow">Close</div>
+          <h2>Challenge | Remember | Questions</h2>
+          <div class="highlight-box" style="font-size:0.6em;margin-top:4px;">
+            Design for <strong>100,000 users</strong>  -  compute, network, LB, DB, storage, security, scale, HA, monitoring, CI/CD.
+          </div>
+          <div class="countdown" id="countdown-display" style="font-size:2.2em;margin:8px 0;">10</div>
+          <p style="text-align:center;font-size:0.45em;margin:0;" id="countdown-hint">Discuss  -  then reveal</p>
+          <div id="challenge-reveal" style="display:none;text-align:center;margin:6px 0;">
+            <div class="flow-node cyan" style="display:inline-block;padding:8px 14px;font-size:0.42em;">
+              Users -> DNS -> CDN/WAF -> LB -> Compute -> App -> Cache + DB + Object Storage (+ IAM, Monitor, CI/CD, Terraform)
+            </div>
+          </div>
+          <div class="takeaways" style="margin-top:8px;gap:6px;">
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>01</span>Cloud = On-Demand</div>
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>02</span>Scale vs Elasticity</div>
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>03</span>IaaS / PaaS / SaaS</div>
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>04</span>Regions + AZs</div>
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>05</span>IAM = Access</div>
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>06</span>Containers -> K8s</div>
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>07</span>Terraform = IaC</div>
+            <div class="takeaway fragment" style="padding:8px 10px;font-size:0.48em;"><span>08</span>Projects = Skills</div>
+          </div>
+          <div class="qa-slide" style="min-height:auto;margin-top:10px;padding:0;">
+            <h1 style="font-size:2.4em;margin:0;">QUESTIONS?</h1>
+            <p class="subtitle" style="font-size:0.7em;margin:4px 0 0;">Let's Talk Cloud</p>
+          </div>
+        </div>
+        <aside class="notes">
+          Start countdown on entry. Collect questions. Push one cloud + one project commitment.
+          Close: certifications optional, curiosity mandatory.
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+  <script>
+    function spawnParticles(containerId, count) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDelay = (Math.random() * 12) + 's';
+        p.style.animationDuration = (8 + Math.random() * 10) + 's';
+        p.style.background = Math.random() > 0.5 ? '#22d3ee' : '#a78bfa';
+        el.appendChild(p);
+      }
+    }
+    spawnParticles('particles-title', 28);
+    spawnParticles('particles-qa', 20);
+
+    function revealAnswer(btn) {
+      const answer = btn.parentElement.querySelector('.quiz-answer');
+      if (answer) answer.classList.add('show');
+      btn.style.opacity = '0.5';
+      btn.disabled = true;
+    }
+
+    let countdownTimer = null;
+    function startCountdown(seconds) {
+      const display = document.getElementById('countdown-display');
+      const hint = document.getElementById('countdown-hint');
+      if (!display) return;
+      let n = seconds || 10;
+      display.textContent = n;
+      display.style.color = '';
+      if (countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(() => {
+        n -= 1;
+        display.textContent = n > 0 ? n : 'GO';
+        if (n <= 0) {
+          clearInterval(countdownTimer);
+          if (hint) hint.textContent = 'Reference architecture unlocked';
+          display.style.color = '#34d399';
+          const reveal = document.getElementById('challenge-reveal');
+          if (reveal) {
+            reveal.style.display = 'block';
+            reveal.style.animation = 'fadeUp 0.5s ease';
+          }
+        }
+      }, 1000);
+    }
+
+    const SECTION_MAP = {
+      'CLOUD FUNDAMENTALS': 'CLOUD FUNDAMENTALS',
+      'SERVICE MODELS': 'SERVICE MODELS',
+      'DEPLOYMENT MODELS': 'DEPLOYMENT & PROVIDERS',
+      'CLOUD INFRASTRUCTURE': 'CLOUD INFRASTRUCTURE',
+      'SECURITY': 'DATA & SECURITY',
+      'SCALABILITY & AVAILABILITY': 'SCALE & HA',
+      'DEVOPS': 'DEVOPS',
+      'CERTIFICATION PATH': 'CERTIFICATION PATH',
+      'REAL WORLD': 'REAL WORLD',
+      'KEY TAKEAWAYS': 'WRAP-UP'
+    };
+
+    Reveal.initialize({
+      hash: true,
+      controls: true,
+      controlsTutorial: false,
+      progress: false,
+      slideNumber: false,
+      keyboard: true,
+      overview: true,
+      center: false,
+      touch: true,
+      loop: false,
+      transition: 'slide',
+      backgroundTransition: 'fade',
+      width: 1280,
+      height: 720,
+      margin: 0.06,
+      minScale: 0.3,
+      maxScale: 1.6,
+      plugins: [RevealNotes]
+    }).then(updateChrome);
+
+    function updateChrome() {
+      const indices = Reveal.getIndices();
+      const total = Reveal.getTotalSlides();
+      const current = indices.h + 1;
+      document.getElementById('slide-counter').textContent =
+        String(current).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+      document.getElementById('progress-bar').style.width = ((current / total) * 100) + '%';
+      const slide = Reveal.getCurrentSlide();
+      const section = slide.getAttribute('data-section') || 'CLOUD FUNDAMENTALS';
+      document.getElementById('section-label').textContent = SECTION_MAP[section] || section;
+      if (slide.querySelector('#countdown-display') && !slide.dataset.countdownStarted) {
+        slide.dataset.countdownStarted = '1';
+        startCountdown(10);
+      }
+    }
+
+    Reveal.on('slidechanged', updateChrome);
+    Reveal.on('ready', updateChrome);
+  </script>
+</body>
+</html>
