@@ -1,0 +1,529 @@
+# Basic Linux Commands — A Practical Guide
+
+A beginner-friendly reference of the most common Linux commands, with syntax, useful options, and examples.
+
+> **Tip:** For any command, run `man <command>` or `<command> --help` to see its full documentation.
+
+---
+
+## Table of Contents
+
+1. [Navigation](#1-navigation)
+2. [Files and Directories](#2-files-and-directories)
+3. [Viewing File Content](#3-viewing-file-content)
+4. [Searching](#4-searching)
+5. [Permissions and Ownership](#5-permissions-and-ownership)
+6. [Users and Groups](#6-users-and-groups)
+7. [Processes](#7-processes)
+8. [System Information](#8-system-information)
+9. [Disk Usage](#9-disk-usage)
+10. [Networking](#10-networking)
+11. [Archives and Compression](#11-archives-and-compression)
+12. [Package Management](#12-package-management)
+13. [Text Processing](#13-text-processing)
+14. [Redirection and Pipes](#14-redirection-and-pipes)
+15. [Environment and Shell](#15-environment-and-shell)
+16. [Services (systemd)](#16-services-systemd)
+17. [Keyboard Shortcuts](#17-keyboard-shortcuts)
+
+---
+
+## 1. Navigation
+
+| Command | Description |
+|---------|-------------|
+| `pwd` | Print the current working directory |
+| `ls` | List directory contents |
+| `cd` | Change directory |
+
+```bash
+pwd                 # /home/user
+
+ls                  # list files
+ls -l               # long format (permissions, size, date)
+ls -a               # include hidden files (starting with .)
+ls -lh              # human-readable sizes (K, M, G)
+ls -lt              # sort by modification time
+
+cd /var/log         # go to an absolute path
+cd Documents        # go to a relative path
+cd ..               # go up one level
+cd ~                # go to home directory (same as plain `cd`)
+cd -                # go back to the previous directory
+```
+
+---
+
+## 2. Files and Directories
+
+| Command | Description |
+|---------|-------------|
+| `touch` | Create an empty file or update its timestamp |
+| `mkdir` | Create a directory |
+| `cp` | Copy files or directories |
+| `mv` | Move or rename files |
+| `rm` | Remove files |
+| `rmdir` | Remove an empty directory |
+| `ln` | Create links |
+
+```bash
+touch notes.txt                 # create empty file
+
+mkdir projects                  # create a directory
+mkdir -p a/b/c                  # create nested directories
+
+cp file.txt backup.txt          # copy a file
+cp -r src/ src_backup/          # copy a directory recursively
+cp -i file.txt dest/            # ask before overwriting
+
+mv old.txt new.txt              # rename
+mv file.txt ~/Documents/        # move
+
+rm file.txt                     # delete a file
+rm -i file.txt                  # ask for confirmation
+rm -r folder/                   # delete a directory and its contents
+rm -rf folder/                  # force delete (DANGEROUS — no undo!)
+
+rmdir empty_folder              # remove empty directory
+
+ln -s /path/to/target link_name # create a symbolic (soft) link
+```
+
+> **Warning:** Linux has no recycle bin for `rm`. Double-check before using `rm -rf`.
+
+---
+
+## 3. Viewing File Content
+
+| Command | Description |
+|---------|-------------|
+| `cat` | Print the whole file |
+| `less` | View a file page by page (scrollable) |
+| `more` | Older pager, forward only |
+| `head` | Show the first lines |
+| `tail` | Show the last lines |
+| `wc` | Count lines, words, characters |
+
+```bash
+cat file.txt                # print file
+cat -n file.txt             # with line numbers
+cat a.txt b.txt > all.txt   # concatenate files
+
+less big.log                # navigate: Space/b = page, /word = search, q = quit
+
+head file.txt               # first 10 lines
+head -n 20 file.txt         # first 20 lines
+
+tail file.txt               # last 10 lines
+tail -n 50 file.txt         # last 50 lines
+tail -f /var/log/syslog     # follow file live (great for logs)
+
+wc file.txt                 # lines, words, bytes
+wc -l file.txt              # line count only
+```
+
+---
+
+## 4. Searching
+
+| Command | Description |
+|---------|-------------|
+| `find` | Search for files by name, type, size, time... |
+| `grep` | Search for text inside files |
+| `locate` | Fast file search using a database |
+| `which` | Show the path of a command |
+| `whereis` | Locate binary, source, and man page |
+
+```bash
+find . -name "*.txt"                # all .txt files under current dir
+find /home -type d -name "logs"     # directories named logs
+find . -size +100M                  # files bigger than 100 MB
+find . -mtime -7                    # modified in last 7 days
+find . -name "*.tmp" -delete        # find and delete
+
+grep "error" app.log                # lines containing "error"
+grep -i "error" app.log             # case-insensitive
+grep -r "TODO" ./src                # recursive search in folder
+grep -n "main" file.c               # show line numbers
+grep -v "debug" app.log             # lines NOT matching
+grep -c "error" app.log             # count matches
+
+locate nginx.conf                   # (run `sudo updatedb` to refresh index)
+
+which python3                       # /usr/bin/python3
+whereis ls
+```
+
+---
+
+## 5. Permissions and Ownership
+
+Running `ls -l` shows permissions like:
+
+```
+-rwxr-xr--  1 user group  1024 Oct 3 12:00 script.sh
+│└┬┘└┬┘└┬┘
+│ │  │  └── others: r--  (read)
+│ │  └───── group:  r-x  (read, execute)
+│ └──────── owner:  rwx  (read, write, execute)
+└────────── type: - file, d directory, l link
+```
+
+Numeric values: **r = 4**, **w = 2**, **x = 1**. Add them per group (e.g. `rwx` = 7, `r-x` = 5).
+
+| Command | Description |
+|---------|-------------|
+| `chmod` | Change permissions |
+| `chown` | Change owner/group |
+| `chgrp` | Change group |
+| `sudo` | Run a command as superuser (root) |
+
+```bash
+chmod +x script.sh          # make executable
+chmod 755 script.sh         # rwxr-xr-x
+chmod 644 file.txt          # rw-r--r--
+chmod u+w,g-w file.txt      # add write to owner, remove from group
+chmod -R 755 folder/        # recursive
+
+sudo chown user file.txt            # change owner
+sudo chown user:group file.txt      # change owner and group
+sudo chown -R user:group folder/    # recursive
+
+sudo chgrp developers file.txt
+
+sudo apt update             # run command as root
+sudo -i                     # open a root shell (use carefully)
+```
+
+---
+
+## 6. Users and Groups
+
+```bash
+whoami                      # current username
+id                          # user ID, group IDs
+who                         # who is logged in
+groups                      # groups of current user
+
+sudo adduser alice          # create user (interactive, Debian/Ubuntu)
+sudo useradd -m bob         # create user with home directory
+sudo passwd alice           # set/change password
+passwd                      # change your own password
+sudo usermod -aG sudo alice # add alice to the sudo group
+sudo deluser alice          # delete user
+su - alice                  # switch to user alice
+```
+
+---
+
+## 7. Processes
+
+| Command | Description |
+|---------|-------------|
+| `ps` | Snapshot of running processes |
+| `top` / `htop` | Live process monitor |
+| `kill` | Send a signal to a process by PID |
+| `killall` / `pkill` | Kill processes by name |
+| `jobs`, `bg`, `fg` | Manage background jobs |
+| `nohup` | Keep a command running after logout |
+
+```bash
+ps                          # processes in current shell
+ps aux                      # all processes, detailed
+ps aux | grep nginx         # find a specific process
+
+top                         # live view (q to quit)
+htop                        # nicer live view (may need install)
+
+kill 1234                   # gracefully stop process 1234 (SIGTERM)
+kill -9 1234                # force kill (SIGKILL)
+pkill firefox               # kill by name
+killall node
+
+sleep 100 &                 # run in background
+jobs                        # list background jobs
+fg %1                       # bring job 1 to foreground
+bg %1                       # resume job 1 in background
+# Ctrl+Z suspends the current foreground process
+
+nohup ./server.sh &         # keeps running after you log out
+```
+
+---
+
+## 8. System Information
+
+```bash
+uname -a                    # kernel and system info
+hostname                    # machine name
+uptime                      # how long the system has been running
+date                        # current date and time
+cal                         # calendar
+cat /etc/os-release         # distribution info
+lscpu                       # CPU info
+free -h                     # memory usage (human-readable)
+lsblk                       # block devices (disks, partitions)
+lsusb                       # USB devices
+lspci                       # PCI devices
+dmesg | tail                # recent kernel messages
+history                     # previously run commands
+```
+
+---
+
+## 9. Disk Usage
+
+```bash
+df -h                       # free/used space per filesystem
+du -sh folder/              # total size of a folder
+du -h --max-depth=1         # size of each subfolder
+du -ah | sort -rh | head    # biggest files/folders
+
+sudo mount /dev/sdb1 /mnt   # mount a device
+sudo umount /mnt            # unmount
+```
+
+---
+
+## 10. Networking
+
+| Command | Description |
+|---------|-------------|
+| `ip` | Show/manage IP addresses and routes |
+| `ping` | Test connectivity |
+| `curl` / `wget` | Download / make HTTP requests |
+| `ssh` | Connect to a remote machine |
+| `scp` / `rsync` | Copy files to/from remote machines |
+| `ss` / `netstat` | Show open ports and connections |
+
+```bash
+ip a                        # show IP addresses
+ip r                        # show routing table
+ping google.com             # test connection (Ctrl+C to stop)
+ping -c 4 google.com        # send only 4 packets
+
+curl https://example.com            # fetch a URL
+curl -I https://example.com         # headers only
+curl -O https://site.com/file.zip   # download a file
+wget https://site.com/file.zip      # download a file
+
+ssh user@192.168.1.10               # remote login
+ssh -p 2222 user@host               # custom port
+ssh-keygen -t ed25519               # generate SSH key pair
+ssh-copy-id user@host               # install your key on server
+
+scp file.txt user@host:/home/user/          # upload
+scp user@host:/var/log/app.log .            # download
+rsync -avz ./site/ user@host:/var/www/      # efficient sync
+
+ss -tuln                    # listening TCP/UDP ports
+nslookup example.com        # DNS lookup
+dig example.com             # detailed DNS lookup
+traceroute google.com       # route packets take
+```
+
+---
+
+## 11. Archives and Compression
+
+```bash
+# tar: c = create, x = extract, v = verbose, f = file, z = gzip, j = bzip2
+tar -cvf archive.tar folder/        # create .tar
+tar -czvf archive.tar.gz folder/    # create .tar.gz
+tar -xvf archive.tar                # extract .tar
+tar -xzvf archive.tar.gz            # extract .tar.gz
+tar -xzvf archive.tar.gz -C /dest   # extract to a specific folder
+tar -tvf archive.tar                # list contents
+
+gzip file.txt               # -> file.txt.gz
+gunzip file.txt.gz          # -> file.txt
+
+zip -r archive.zip folder/  # create zip
+unzip archive.zip           # extract zip
+unzip archive.zip -d dest/  # extract to folder
+```
+
+---
+
+## 12. Package Management
+
+**Debian / Ubuntu (`apt`)**
+
+```bash
+sudo apt update                 # refresh package lists
+sudo apt upgrade                # upgrade installed packages
+sudo apt install git            # install a package
+sudo apt remove git             # remove a package
+sudo apt autoremove             # remove unused dependencies
+apt search nginx                # search for packages
+apt show nginx                  # package details
+```
+
+**Fedora / RHEL / CentOS (`dnf` / `yum`)**
+
+```bash
+sudo dnf install git
+sudo dnf remove git
+sudo dnf update
+```
+
+**Arch Linux (`pacman`)**
+
+```bash
+sudo pacman -Syu                # update system
+sudo pacman -S git              # install
+sudo pacman -R git              # remove
+```
+
+---
+
+## 13. Text Processing
+
+```bash
+echo "Hello World"              # print text
+
+sort names.txt                  # sort lines
+sort -r names.txt               # reverse order
+sort -n numbers.txt             # numeric sort
+uniq                            # remove adjacent duplicates (use after sort)
+sort names.txt | uniq -c        # count occurrences
+
+cut -d',' -f1,3 data.csv        # columns 1 and 3 of a CSV
+tr 'a-z' 'A-Z' < file.txt       # convert to uppercase
+
+sed 's/old/new/g' file.txt      # replace text (print result)
+sed -i 's/old/new/g' file.txt   # replace in place
+
+awk '{print $1}' file.txt       # print first column
+awk -F',' '{print $2}' data.csv # second column of CSV
+
+diff file1.txt file2.txt        # compare two files
+
+nano file.txt                   # simple terminal editor (Ctrl+O save, Ctrl+X exit)
+vim file.txt                    # advanced editor (i = insert, Esc then :wq = save & quit)
+```
+
+---
+
+## 14. Redirection and Pipes
+
+| Symbol | Meaning |
+|--------|---------|
+| `>` | Redirect output to a file (overwrite) |
+| `>>` | Redirect output to a file (append) |
+| `<` | Use a file as input |
+| `2>` | Redirect errors |
+| `&>` | Redirect output and errors |
+| `\|` | Pipe output of one command into another |
+| `&&` | Run next command only if previous succeeded |
+| `\|\|` | Run next command only if previous failed |
+| `;` | Run commands one after another |
+
+```bash
+ls > files.txt                  # save output to file
+echo "new line" >> files.txt    # append
+sort < names.txt                # read input from file
+command 2> errors.log           # save errors only
+command &> all.log              # save output + errors
+command > /dev/null 2>&1        # discard everything
+
+ps aux | grep python | wc -l    # chain commands with pipes
+cat access.log | sort | uniq -c | sort -rn | head
+
+mkdir build && cd build         # cd only if mkdir succeeded
+ping -c1 host || echo "down"    # echo only if ping failed
+
+ls | tee output.txt             # show output AND save to file
+```
+
+---
+
+## 15. Environment and Shell
+
+```bash
+echo $HOME                      # print a variable
+echo $PATH                      # directories searched for commands
+env                             # list environment variables
+export MY_VAR="hello"           # set a variable for this session
+
+alias ll='ls -la'               # create a shortcut
+unalias ll                      # remove it
+
+source ~/.bashrc                # reload shell config
+clear                           # clear the screen
+exit                            # close the shell/session
+
+history                         # list past commands
+!!                              # repeat last command
+sudo !!                         # repeat last command with sudo
+!42                             # run command #42 from history
+```
+
+To make aliases and variables permanent, add them to `~/.bashrc` (or `~/.zshrc`).
+
+---
+
+## 16. Services (systemd)
+
+```bash
+sudo systemctl start nginx      # start a service
+sudo systemctl stop nginx       # stop
+sudo systemctl restart nginx    # restart
+sudo systemctl status nginx     # check status
+sudo systemctl enable nginx     # start automatically on boot
+sudo systemctl disable nginx    # don't start on boot
+
+journalctl -u nginx             # logs of a service
+journalctl -f                   # follow system logs live
+
+sudo reboot                     # restart the machine
+sudo shutdown now               # power off immediately
+sudo shutdown -r +10            # reboot in 10 minutes
+```
+
+---
+
+## 17. Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Tab` | Auto-complete commands and file names |
+| `↑` / `↓` | Browse command history |
+| `Ctrl + C` | Stop the running command |
+| `Ctrl + Z` | Suspend the running command |
+| `Ctrl + D` | Exit the shell / end input |
+| `Ctrl + L` | Clear the screen |
+| `Ctrl + R` | Search command history |
+| `Ctrl + A` | Move cursor to start of line |
+| `Ctrl + E` | Move cursor to end of line |
+| `Ctrl + U` | Delete from cursor to start of line |
+| `Ctrl + K` | Delete from cursor to end of line |
+| `Ctrl + W` | Delete the previous word |
+
+---
+
+## Quick Practice Exercise
+
+Try this sequence to practice the basics:
+
+```bash
+cd ~
+mkdir -p practice/logs
+cd practice
+echo "first line" > notes.txt
+echo "second line" >> notes.txt
+cat notes.txt
+cp notes.txt logs/notes_backup.txt
+ls -lR
+grep "second" notes.txt
+chmod 600 notes.txt
+ls -l notes.txt
+tar -czvf practice.tar.gz logs/
+cd ~
+rm -r practice
+```
+
+---
+
+**Happy learning!**
+
